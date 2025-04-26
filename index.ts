@@ -1,5 +1,6 @@
 import { parseArgs } from 'util'
 import { TokenType, Token } from './Token';
+import { BinaryExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr } from './Expr';
 
 const { values } = parseArgs({
   args: Bun.argv,
@@ -237,7 +238,7 @@ function run(source: string) {
   const tokens = scanner.scanTokens();
 
   for (const token of tokens) {
-    console.log(token)
+    // console.log(token)
   }
 }
 
@@ -248,9 +249,17 @@ async function main() {
     return;
   }
 
+
   const file = Bun.file(values.file);
   const source = await file.text();
   run(source);
+
+
+  PrintAST(BinaryExpr(
+    UnaryExpr(new Token(TokenType.MINUS, "-", 1, null), LiteralExpr(123)),
+    new Token(TokenType.STAR, "*", 1, null),
+    GroupingExpr(LiteralExpr(45.67))
+  ))
 
 }
 

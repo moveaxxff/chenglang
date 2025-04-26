@@ -52,9 +52,9 @@ export enum TokenType {
 export class Token {
   readonly literal: any;
   readonly line: number;
-  readonly lexeme: String;
+  readonly lexeme: string;
   readonly type: TokenType;
-  constructor(type: TokenType, lexeme: String, line: number, literal: any) {
+  constructor(type: TokenType, lexeme: string, line: number, literal: any) {
     this.line = line;
     this.lexeme = lexeme;
     this.type = type;
