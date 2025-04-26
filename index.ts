@@ -177,6 +177,20 @@ class Scanner {
         this.string();
         break;
       case '/':
+        if (this.match('*')) {
+          while (this.peek() != '*' && this.peekNext() != '/' && !this.isAtEnd()) {
+            if (this.peek() == '\n') this.line++;
+            this.advance();
+          }
+          if (this.isAtEnd()) {
+            error(this.line, "Unterminated block comment.");
+            return;
+          }
+          this.advance();
+          this.advance();
+        }
+        break;
+      case '/':
         if (this.match('/')) {
           while (this.peek() != '\n' && !this.isAtEnd()) this.advance();
         } else {
