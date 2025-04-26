@@ -63,6 +63,23 @@ enum TokenType {
   EOF = "EOF"
 }
 
+
+abstract class Expr {
+
+}
+
+class Binary extends Expr {
+  left: Expr;
+  operator: Token;
+  right: Expr;
+  constructor(left: Expr, operator: Token, right: Expr) {
+    super();
+    this.left = left;
+    this.operator = operator;
+    this.right = right;
+  }
+}
+
 class Token {
   readonly literal: any;
   readonly line: number;
