@@ -58,6 +58,7 @@ enum TokenType {
   CHOKWADI = "CHOKWADI", // true in english
   CHENG = "CHENG", // let in english
   APO = "APO", // while in english
+  PAMWE = "PAMWE", // else in english
 
   EOF = "EOF"
 }
@@ -96,7 +97,8 @@ class Scanner {
     ["ino", TokenType.INO],
     ["chokwadi", TokenType.CHOKWADI],
     ["cheng", TokenType.CHENG],
-    ["apo", TokenType.APO]
+    ["apo", TokenType.APO],
+    ["pamwe", TokenType.PAMWE]
   ])
 
 
