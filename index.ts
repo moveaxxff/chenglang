@@ -123,7 +123,6 @@ class Scanner {
     this.addToken(TokenType.STRING, text);
   }
 
-
   private isDigit(c: string) {
     return c >= '0' && c <= '9';
   }

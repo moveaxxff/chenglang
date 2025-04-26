@@ -1,5 +1,6 @@
 //hello from file
 
+
 (()) {{}}
 > <= >= == != < >
 cheng PI = 3.1415926535897932384626433832795
@@ -13,3 +14,13 @@ dai (x == 1.23) {
 basa donothing() {
   dzoka 2;
 }
+
+/* 
+
+hello block comment
+
+/* nested comment */
+
+*/
+
+
