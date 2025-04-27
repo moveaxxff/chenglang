@@ -569,6 +569,10 @@ function InterpretExpr(expr: Expr): any {
               return !isEqual(left, right);
             case TokenType.PLUS:
               {
+                if (typeof left === "boolean" && typeof right === "string")
+                  return Boolean(left) + String(right);
+                if (typeof left === "string" && typeof right === "boolean")
+                  return String(left) + Boolean(right);
                 if (typeof left === "number" && typeof right === "string")
                   return Number(left) + String(right);
                 if (typeof left === "string" && typeof right === "number")
