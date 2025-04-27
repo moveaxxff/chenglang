@@ -307,16 +307,11 @@ class Parser {
   }
 
   private commaSeries() {
-    let expression = this.expression();
-    let count = 0;
-    const exprs: Expr[] = [];
+    let expr = this.expression();
     while (this.match([TokenType.COMMA])) {
-      const expr = this.expression();
-      count++;
-      exprs.push(expr)
+      expr = this.expression();
     }
-
-    return exprs.at(exprs.length - 1);
+    return expr;
   }
 
   private primary(): Expr {
