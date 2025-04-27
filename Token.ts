@@ -11,6 +11,8 @@ export enum TokenType {
   SEMICOLON = ";",
   SLASH = "/",
   STAR = "*",
+  TOKEN_QUESTION_MARK = "?",
+  TOKEN_COLON = ":", 
 
   // One or two character tokens.
   BANG = "!",
