@@ -302,11 +302,11 @@ class Parser {
 
   private tenary(): Expr {
     let left = this.expression();
-
     while (this.match([TokenType.QUESTION_MARK, TokenType.COLON])) {
 
       const token: Token = this.previous();
       const right = this.expression();
+      console.log(right)
       left = BinaryExpr(left, token, right);
     }
 
