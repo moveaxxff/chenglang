@@ -306,7 +306,6 @@ class Parser {
 
       const token: Token = this.previous();
       const right = this.expression();
-      console.log(right)
       left = BinaryExpr(left, token, right);
     }
 
