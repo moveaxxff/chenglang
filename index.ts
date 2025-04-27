@@ -301,10 +301,16 @@ class Parser {
   }
 
   private tenary(): Expr {
-    let expr = this.comparison();
+    let left = this.expression();
 
-    while (this.match([TokenType.]))
+    while (this.match([TokenType.QUESTION_MARK, TokenType.COLON])) {
 
+      const token: Token = this.previous();
+      const right = this.expression();
+      left = BinaryExpr(left, token, right);
+    }
+
+    return left;
   }
 
   private unary(): Expr {
@@ -320,9 +326,9 @@ class Parser {
   }
 
   private commaSeries() {
-    let expr = this.unary();
+    let expr = this.tenary();
     while (this.match([TokenType.COMMA])) {
-      expr = UnaryExpr(expr.operator as Token, this.primary())
+      expr = this.expression();
     }
     return expr;
   }
@@ -337,14 +343,8 @@ class Parser {
       return LiteralExpr(this.previous().literal)
     }
 
-
     if (this.match([TokenType.LEFT_PAREN])) {
       const expr: Expr = this.expression();
-      if (this.match([TokenType.COMMA])) {
-        const expr = this.expression();
-        return expr;
-      }
-
       this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression");
       return GroupingExpr(expr);
     }
@@ -356,7 +356,7 @@ class Parser {
   parse(): Expr | null {
 
     try {
-      return this.commaSeries();
+      return this.tenary();
     } catch (e) {
       return null;
     }
