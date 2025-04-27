@@ -328,7 +328,7 @@ class Parser {
   private commaSeries() {
     let expr = this.tenary();
     while (this.match([TokenType.COMMA])) {
-      expr = this.expression();
+      expr = this.tenary();
     }
     return expr;
   }
@@ -344,7 +344,12 @@ class Parser {
     }
 
     if (this.match([TokenType.LEFT_PAREN])) {
-      const expr: Expr = this.expression();
+      const expr: Expr = this.tenary();
+
+      if (this.match([TokenType.COMMA])) {
+        return this.tenary()
+      }
+
       this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression");
       return GroupingExpr(expr);
     }
@@ -356,7 +361,7 @@ class Parser {
   parse(): Expr | null {
 
     try {
-      return this.tenary();
+      return this.commaSeries();
     } catch (e) {
       return null;
     }
