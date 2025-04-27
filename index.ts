@@ -307,9 +307,9 @@ class Parser {
   }
 
   private commaSeries() {
-    let expr = this.expression();
+    let expr = this.unary();
     while (this.match([TokenType.COMMA])) {
-      expr = this.expression();
+      expr = UnaryExpr(expr.operator as Token, this.primary())
     }
     return expr;
   }
