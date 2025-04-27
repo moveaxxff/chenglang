@@ -441,6 +441,11 @@ function report(line: number, where: string, message: string) {
 }
 
 function InterpretExpr(expr: Expr): any {
+
+  const isEqual = (a: any, b: any) => {
+    return a === b;
+  }
+
   switch (expr.type) {
     case 'Literal':
       return expr.value;
@@ -486,11 +491,17 @@ function InterpretExpr(expr: Expr): any {
               return Number(left) / Number(right);
             case TokenType.MINUS:
               return Number(left) - Number(right);
+            case TokenType.EQUAL_EQUAL:
+              return isEqual(left, right);
+            case TokenType.BANG_EQUAL:
+              return !isEqual(left, right);
             case TokenType.PLUS:
-              if (typeof left === "number" && typeof right === "number")
-                return Number(left) + Number(right);
-              if (typeof left === "string" && typeof right === "string")
-                return String(left) + String(right);
+              {
+                if (typeof left === "number" && typeof right === "number")
+                  return Number(left) + Number(right);
+                if (typeof left === "string" && typeof right === "string")
+                  return String(left) + String(right);
+              }
           }
         }
       }
