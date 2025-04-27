@@ -1,8 +1,6 @@
 import { parseArgs } from 'util'
 import { TokenType, Token } from './Token';
 import { BinaryExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
-import { equal } from 'assert';
-import { peek } from 'bun';
 
 const { values } = parseArgs({
   args: Bun.argv,
@@ -128,7 +126,9 @@ class Scanner {
         this.string();
         break;
       case '/':
-        if (this.match('*')) {
+        if (this.match('/')) {
+          while (this.peek() != '\n' && !this.isAtEnd()) this.advance();
+        } else if (this.match('*')) {
           while (this.peek() != '*' && this.peekNext() != '/' && !this.isAtEnd()) {
             if (this.peek() == '\n') this.line++;
             this.advance();
@@ -139,11 +139,6 @@ class Scanner {
           }
           this.advance();
           this.advance();
-        }
-        break;
-      case '/':
-        if (this.match('/')) {
-          while (this.peek() != '\n' && !this.isAtEnd()) this.advance();
         } else {
           this.addToken(TokenType.SLASH);
         }
@@ -287,15 +282,17 @@ class Parser {
 
       const operator: Token = this.previous();
       const right: Expr = this.factor();
+      console.log(right)
 
       expr = BinaryExpr(expr, operator, right);
-
+      console.log(expr)
     }
     return expr;
   }
 
   private factor(): Expr {
     let expr: Expr = this.unary();
+
 
     while (this.match([TokenType.SLASH, TokenType.STAR])) {
       const operator: Token = this.previous();
@@ -392,7 +389,7 @@ class Parser {
   }
 
   private isAtEnd(): boolean {
-    return this.peek().type == TokenType.EOF;
+    return this.peek().type === TokenType.EOF;
   }
 
   private peek(): Token {
@@ -418,9 +415,14 @@ function run(source: string) {
   const tokens = scanner.scanTokens();
   const parser = new Parser(tokens);
   const expression = parser.parse();
-
   if (expression) {
     PrintAST(expression)
+  }
+
+  const expression2 = parser.parse();
+
+  if (expression2) {
+    PrintAST(expression2)
   }
 }
 

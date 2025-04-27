@@ -1,26 +1,5 @@
-//hello from file
 
 
-(()) {{}}
-> <= >= == != < >
-cheng PI = 3.1415926535897932384626433832795
-cheng name = "moveeaxxff"
-cheng x = 1.23
-
-dai (x == 1.23) {
-  dhinda x
-}
-
-basa donothing() {
-  dzoka 2;
-}
-
-/* 
-
-hello block comment
-
-/* nested comment */
-
-*/
-
-
+1 + 2 / 3 * 5;
+2 > 2;
+5 < 7;
