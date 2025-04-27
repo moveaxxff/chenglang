@@ -2,6 +2,7 @@ import { parseArgs } from 'util'
 import { TokenType, Token } from './Token';
 import { BinaryExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
 import { parse } from 'path';
+import { randomInt } from 'crypto';
 
 const { values } = parseArgs({
   args: Bun.argv,
@@ -16,6 +17,28 @@ const { values } = parseArgs({
   strict: true,
   allowPositionals: true
 })
+
+class RuntimeException extends Error {
+  token: Token;
+  constructor(operator: Token, message: string) {
+    super(message);
+    this.name = "RuntimeException";
+    this.token = operator;
+  }
+}
+
+function CheckNumberOperand(token: Token, operand: any) {
+  if (typeof operand === "number") return;
+  throw new RuntimeException(token, "Operand must be a number.");
+}
+
+function CheckNumberOperands(token: Token, left: any, right: any) {
+
+  if (typeof left === "number" && typeof right === "number") return;
+
+  throw new RuntimeException(token, "Operands must be numbers");
+
+}
 
 function ParseError(token: Token, message: string) {
   if (token.type === TokenType.EOF) {
@@ -486,10 +509,13 @@ function InterpretExpr(expr: Expr): any {
             case TokenType.LESS_EQUAL:
               return Number(left) <= Number(right);
             case TokenType.STAR:
+              CheckNumberOperands(expr.operator, left, right);
               return Number(left) * Number(right);
             case TokenType.SLASH:
+              CheckNumberOperands(expr.operator, left, right);
               return Number(left) / Number(right);
             case TokenType.MINUS:
+              CheckNumberOperands(expr.operator, left, right);
               return Number(left) - Number(right);
             case TokenType.EQUAL_EQUAL:
               return isEqual(left, right);
@@ -497,6 +523,10 @@ function InterpretExpr(expr: Expr): any {
               return !isEqual(left, right);
             case TokenType.PLUS:
               {
+                if (typeof left === "number" && typeof right === "string")
+                  return Number(left) + String(right);
+                if (typeof left === "string" && typeof right === "number")
+                  return String(left) + Number(right);
                 if (typeof left === "number" && typeof right === "number")
                   return Number(left) + Number(right);
                 if (typeof left === "string" && typeof right === "string")
@@ -521,6 +551,7 @@ function InterpretExpr(expr: Expr): any {
 
           switch (expr.operator.type) {
             case TokenType.MINUS:
+              CheckNumberOperand(expr.operator, right);
               return -Number(right)
             case TokenType.BANG:
               return !Boolean(right)

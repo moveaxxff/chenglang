@@ -1,4 +1,10 @@
 
+1 + "tawanda";
+
+2 * (3 / -"tawanda");
+
+1 == hapana;
+
 hapana == hapana;
 
 hapana == hapana;
