@@ -26,3 +26,9 @@ unary -> ( "!" | "-" ) unary
 primary -> literal | grouping ;
 comma-series -> unary "(" expression, ( "," expression )* ")"
 tenary -> comparison "?" expression ":" expression tenary
+
+program     ->  statement* EOF ;
+statement   -> exprStmt
+             | printStmt;
+exprStmt    -> expression ";" ;
+printStmt   -> "dhinda" expression ";" ;

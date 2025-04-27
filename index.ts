@@ -306,11 +306,7 @@ class Parser {
     while (this.match([TokenType.MINUS, TokenType.PLUS])) {
 
       const operator: Token = this.previous();
-
-      console.log(this.next())
-
       const right: Expr = this.factor();
-
       expr = BinaryExpr(expr, operator, right);
     }
     return expr;
@@ -463,6 +459,10 @@ function report(line: number, where: string, message: string) {
   console.error(`[Line ${line}] Error ${where}: ${message}`)
 }
 
+function RuntimeError(error: RuntimeException) {
+  console.error(`${error.message} \n[line ${error.token.line}]`)
+}
+
 function InterpretExpr(expr: Expr): any {
 
   const isEqual = (a: any, b: any) => {
@@ -570,8 +570,13 @@ function run(source: string) {
   const expression = parser.parse();
 
   if (expression) {
-    console.log(expression)
-    console.log(InterpretExpr(expression))
+
+    try {
+      console.log(InterpretExpr(expression))
+    } catch (e) {
+      RuntimeError(e as RuntimeException);
+    }
+
     PrintAST(expression)
   }
 
