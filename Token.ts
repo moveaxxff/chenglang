@@ -33,7 +33,6 @@ export enum TokenType {
   KIRASI = "KIRASI", //class in english
   KANA = "KANA", // or in english
   NE = "NE", //  AND in english
-  MANYEPO = "MANYEPO", // false in english
   BASA = "BASA", //func in english
   CHIN = "CHIN", //Chinangwa aka for
   DAI = "DAI", // if in english

@@ -1,6 +1,7 @@
 import { parseArgs } from 'util'
 import { TokenType, Token } from './Token';
 import { BinaryExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
+import { parse } from 'path';
 
 const { values } = parseArgs({
   args: Bun.argv,
@@ -34,7 +35,7 @@ class Scanner {
     ["kirasi", TokenType.KIRASI],
     ["kana", TokenType.KANA],
     ["ne", TokenType.NE],
-    ["manyepo", TokenType.MANYEPO],
+    ["kunyepa", TokenType.KUNYEPA],
     ["basa", TokenType.BASA],
     ["chin", TokenType.CHIN],
     ["dai", TokenType.DAI],
@@ -282,7 +283,11 @@ class Parser {
     while (this.match([TokenType.MINUS, TokenType.PLUS])) {
 
       const operator: Token = this.previous();
+
+      console.log(this.next())
+
       const right: Expr = this.factor();
+
       expr = BinaryExpr(expr, operator, right);
     }
     return expr;
@@ -417,6 +422,10 @@ class Parser {
     return this.tokens.at(this.current) as Token;
   }
 
+  private next(): Token {
+    return this.tokens.at(this.current + 1) as Token;
+  }
+
   private previous(): Token {
     return this.tokens.at(this.current - 1) as Token;
   }
@@ -431,14 +440,52 @@ function report(line: number, where: string, message: string) {
   console.error(`[Line ${line}] Error ${where}: ${message}`)
 }
 
+function InterpretExpr(expr: Expr): any {
+  switch (expr.type) {
+    case 'Literal':
+      return expr.value;
+    case 'Grouping':
+      if (expr?.expression !== undefined) {
+        return InterpretExpr(expr.expression)
+      } else {
+        return null
+      }
+    case 'Unary':
+      let right: Expr | null = null;
+      if (expr.right !== undefined) {
+        right = InterpretExpr(expr.right)
+      }
+      if (right !== null) {
+
+        if (expr.operator === undefined)
+          return null;
+        if (expr.operator.type === undefined)
+          return null
+
+        switch (expr.operator.type) {
+          case TokenType.MINUS:
+            return -Number(right)
+          case TokenType.BANG:
+            return !Boolean(right)
+        }
+      }
+  }
+
+  return null
+}
+
 function run(source: string) {
   const scanner = new Scanner(source);
   const tokens = scanner.scanTokens();
   const parser = new Parser(tokens);
   const expression = parser.parse();
+
   if (expression) {
+    console.log(expression)
+    console.log(InterpretExpr(expression))
     PrintAST(expression)
   }
+
 }
 
 async function main() {
