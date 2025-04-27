@@ -2,6 +2,7 @@ import { parseArgs } from 'util'
 import { TokenType, Token } from './Token';
 import { BinaryExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
 import { equal } from 'assert';
+import { peek } from 'bun';
 
 const { values } = parseArgs({
   args: Bun.argv,
@@ -334,7 +335,18 @@ class Parser {
       return GroupingExpr(expr);
     }
 
-    return LiteralExpr(undefined);
+    throw ParseError(this.peek(), "Expect expression.");
+
+  }
+
+  parse(): Expr | null {
+
+    try {
+      return this.expression();
+    } catch (e) {
+      return null;
+    }
+
   }
 
   private consume(type: TokenType, message: string) {
@@ -351,6 +363,18 @@ class Parser {
 
       if (this.previous().type === TokenType.SEMICOLON) return;
 
+      switch (this.peek().type) {
+        case TokenType.KIRASI:
+        case TokenType.BASA:
+        case TokenType.CHENG:
+        case TokenType.CHIN:
+        case TokenType.DAI:
+        case TokenType.APO:
+        case TokenType.DHINDA:
+        case TokenType.DZOKA:
+          return;
+      }
+      this.advance();
     }
 
   }
@@ -392,9 +416,11 @@ function report(line: number, where: string, message: string) {
 function run(source: string) {
   const scanner = new Scanner(source);
   const tokens = scanner.scanTokens();
+  const parser = new Parser(tokens);
+  const expression = parser.parse();
 
-  for (const token of tokens) {
-    // console.log(token)
+  if (expression) {
+    PrintAST(expression)
   }
 }
 
@@ -409,13 +435,6 @@ async function main() {
   const file = Bun.file(values.file);
   const source = await file.text();
   run(source);
-
-
-  PrintAST(BinaryExpr(
-    UnaryExpr(new Token(TokenType.MINUS, "-", 1, null), LiteralExpr(123)),
-    new Token(TokenType.STAR, "*", 1, null),
-    GroupingExpr(LiteralExpr(45.67))
-  ))
 
 }
 
