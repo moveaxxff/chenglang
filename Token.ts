@@ -40,11 +40,11 @@ export enum TokenType {
   DZOKA = "DZOKA", // return in english
   MUBEREKI = "MUBEREKI", // super in english
   INO = "INO", // this in english
-  CHOKWADI = "CHOKWADI", // true in english
   CHENG = "CHENG", // let in english
   APO = "APO", // while in english
   PAMWE = "PAMWE", // else in english
-
+  KUNYEPA = "KUNYEPA", // false in english 
+  CHOKWADI = "CHOKWADI", // true in english
   EOF = "EOF"
 }
 
