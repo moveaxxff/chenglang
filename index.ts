@@ -445,10 +445,12 @@ function InterpretExpr(expr: Expr): any {
     case 'Literal':
       return expr.value;
     case 'Grouping':
-      if (expr?.expression !== undefined) {
-        return InterpretExpr(expr.expression)
-      } else {
-        return null
+      {
+        if (expr?.expression !== undefined) {
+          return InterpretExpr(expr.expression)
+        } else {
+          return null
+        }
       }
     case 'Binary':
       {
@@ -476,7 +478,10 @@ function InterpretExpr(expr: Expr): any {
             case TokenType.MINUS:
               return Number(left) - Number(right);
             case TokenType.PLUS:
-              return Number(left) + Number(right);
+              if (typeof left === "number" && typeof right === "number")
+                return Number(left) + Number(right);
+              if (typeof left === "string" && typeof right === "string")
+                return String(left) + String(right);
           }
         }
       }
