@@ -471,6 +471,15 @@ function InterpretExpr(expr: Expr): any {
           if (expr.operator.type === undefined)
             return null
           switch (expr.operator.type) {
+
+            case TokenType.GREATER:
+              return Number(left) > Number(right);
+            case TokenType.GREATER_EQUAL:
+              return Number(left) >= Number(right);
+            case TokenType.LESS:
+              return Number(left) < Number(right);
+            case TokenType.LESS_EQUAL:
+              return Number(left) <= Number(right);
             case TokenType.STAR:
               return Number(left) * Number(right);
             case TokenType.SLASH:
