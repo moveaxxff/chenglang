@@ -3,6 +3,8 @@ import { TokenType, Token } from './Token';
 import { BinaryExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
 import { parse } from 'path';
 import { randomInt } from 'crypto';
+import { DhindaStmt, ExpressionStmt, StmtType, type Stmt } from './Stmt';
+import { which } from 'bun';
 
 const { values } = parseArgs({
   args: Bun.argv,
@@ -381,13 +383,37 @@ class Parser {
 
   }
 
-  parse(): Expr | null {
+  statement(): Stmt {
 
-    try {
-      return this.commaSeries();
-    } catch (e) {
-      return null;
+    if (this.match([TokenType.DHINDA])) return this.dhindaStatement();
+
+    return this.expressionStatement();
+
+  }
+
+  private dhindaStatement(): Stmt {
+    const value = this.commaSeries();
+    this.consume(TokenType.SEMICOLON, "Expect ';' after value.");
+    return DhindaStmt(value);
+  }
+
+
+  private expressionStatement(): Stmt {
+    const value = this.commaSeries();
+    this.consume(TokenType.SEMICOLON, "Expect ';' after value.");
+    return ExpressionStmt(value);
+  }
+
+  parse(): Stmt[] {
+    const statements: Stmt[] = [];
+
+    while (!this.isAtEnd()) {
+
+      statements.push(this.statement());
+
     }
+
+    return statements;
 
   }
 
@@ -461,6 +487,26 @@ function report(line: number, where: string, message: string) {
 
 function RuntimeError(error: RuntimeException) {
   console.error(`${error.message} \n[line ${error.token.line}]`)
+}
+
+function InterpretStmts(stmts: Stmt[]): void {
+  for (const stmt of stmts) {
+    InterpretStmt(stmt);
+  }
+}
+
+function InterpretStmt(stmt: Stmt): void {
+
+  switch (stmt.type) {
+    case StmtType.Expression:
+      InterpretExpr(stmt.expr)
+      break;
+    case StmtType.Dhinda:
+      const value = InterpretExpr(stmt.expr);
+      console.log(value)
+      break;
+  }
+
 }
 
 function InterpretExpr(expr: Expr): any {
@@ -572,12 +618,11 @@ function run(source: string) {
   if (expression) {
 
     try {
-      console.log(InterpretExpr(expression))
+      InterpretStmts(expression);
     } catch (e) {
       RuntimeError(e as RuntimeException);
     }
 
-    PrintAST(expression)
   }
 
 }
