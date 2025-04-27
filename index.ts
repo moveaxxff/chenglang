@@ -277,21 +277,9 @@ class Parser {
 
       const operator: Token = this.previous();
       const right: Expr = this.factor();
-      console.log(right)
-
       expr = BinaryExpr(expr, operator, right);
-      console.log(expr)
     }
     return expr;
-  }
-
-  private commaSeries(): Expr {
-    if (this.match([TokenType.LEFT_PAREN])) {
-
-      this.consume(TokenType.LEFT_PAREN, "Expect ')' after expression");
-      return LiteralExpr(2);
-    }
-
   }
 
   private factor(): Expr {
@@ -318,6 +306,19 @@ class Parser {
 
   }
 
+  private commaSeries() {
+    let expression = this.expression();
+    let count = 0;
+    const exprs: Expr[] = [];
+    while (this.match([TokenType.COMMA])) {
+      const expr = this.expression();
+      count++;
+      exprs.push(expr)
+    }
+
+    return exprs.at(exprs.length - 1);
+  }
+
   private primary(): Expr {
 
     if (this.match([TokenType.KUNYEPA])) return LiteralExpr(false);
@@ -328,8 +329,14 @@ class Parser {
       return LiteralExpr(this.previous().literal)
     }
 
+
     if (this.match([TokenType.LEFT_PAREN])) {
       const expr: Expr = this.expression();
+      if (this.match([TokenType.COMMA])) {
+        const expr = this.expression();
+        return expr;
+      }
+
       this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression");
       return GroupingExpr(expr);
     }
@@ -341,7 +348,7 @@ class Parser {
   parse(): Expr | null {
 
     try {
-      return this.expression();
+      return this.commaSeries();
     } catch (e) {
       return null;
     }
