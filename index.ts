@@ -454,13 +454,13 @@ function InterpretExpr(expr: Expr): any {
         if (expr?.expression !== undefined) {
           return InterpretExpr(expr.expression)
         } else {
-          return null
+          return undefined
         }
       }
     case 'Binary':
       {
-        let left: Expr | null = null;
-        let right: Expr | null = null;
+        let left: Expr | undefined = undefined;
+        let right: Expr | undefined = undefined;
         if (expr.left !== undefined) {
           left = InterpretExpr(expr.left)
         }
@@ -469,12 +469,12 @@ function InterpretExpr(expr: Expr): any {
           right = InterpretExpr(expr.right);
         }
 
-        if (left !== null && right !== null) {
+        if (left !== undefined && right !== undefined) {
 
           if (expr.operator === undefined)
-            return null;
+            return undefined;
           if (expr.operator.type === undefined)
-            return null
+            return undefined;
           switch (expr.operator.type) {
 
             case TokenType.GREATER:
@@ -505,14 +505,14 @@ function InterpretExpr(expr: Expr): any {
           }
         }
       }
-      return null;
+      return undefined;
     case 'Unary':
       {
-        let right: Expr | null = null;
+        let right: Expr | undefined = undefined;
         if (expr.right !== undefined) {
           right = InterpretExpr(expr.right)
         }
-        if (right !== null) {
+        if (right !== undefined) {
 
           if (expr.operator === undefined)
             return null;
@@ -529,7 +529,7 @@ function InterpretExpr(expr: Expr): any {
       }
   }
 
-  return null
+  return undefined
 }
 
 function run(source: string) {
