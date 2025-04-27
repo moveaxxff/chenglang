@@ -101,6 +101,12 @@ class Scanner {
       case '-':
         this.addToken(TokenType.MINUS);
         break;
+      case '?':
+        this.addToken(TokenType.QUESTION_MARK)
+        break;
+      case ':':
+        this.addToken(TokenType.COLON);
+        break;
       case '*':
         this.addToken(TokenType.STAR);
         break;
@@ -291,6 +297,13 @@ class Parser {
     }
 
     return expr;
+
+  }
+
+  private tenary(): Expr {
+    let expr = this.comparison();
+
+    while (this.match([TokenType.]))
 
   }
 
