@@ -450,23 +450,56 @@ function InterpretExpr(expr: Expr): any {
       } else {
         return null
       }
-    case 'Unary':
-      let right: Expr | null = null;
-      if (expr.right !== undefined) {
-        right = InterpretExpr(expr.right)
+    case 'Binary':
+      {
+        let left: Expr | null = null;
+        let right: Expr | null = null;
+        if (expr.left !== undefined) {
+          left = InterpretExpr(expr.left)
+        }
+
+        if (expr.right !== undefined) {
+          right = InterpretExpr(expr.right);
+        }
+
+        if (left !== null && right !== null) {
+
+          if (expr.operator === undefined)
+            return null;
+          if (expr.operator.type === undefined)
+            return null
+          switch (expr.operator.type) {
+            case TokenType.STAR:
+              return Number(left) * Number(right);
+            case TokenType.SLASH:
+              return Number(left) / Number(right);
+            case TokenType.MINUS:
+              return Number(left) - Number(right);
+            case TokenType.PLUS:
+              return Number(left) + Number(right);
+          }
+        }
       }
-      if (right !== null) {
+      return null;
+    case 'Unary':
+      {
+        let right: Expr | null = null;
+        if (expr.right !== undefined) {
+          right = InterpretExpr(expr.right)
+        }
+        if (right !== null) {
 
-        if (expr.operator === undefined)
-          return null;
-        if (expr.operator.type === undefined)
-          return null
+          if (expr.operator === undefined)
+            return null;
+          if (expr.operator.type === undefined)
+            return null
 
-        switch (expr.operator.type) {
-          case TokenType.MINUS:
-            return -Number(right)
-          case TokenType.BANG:
-            return !Boolean(right)
+          switch (expr.operator.type) {
+            case TokenType.MINUS:
+              return -Number(right)
+            case TokenType.BANG:
+              return !Boolean(right)
+          }
         }
       }
   }
