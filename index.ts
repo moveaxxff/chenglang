@@ -168,14 +168,9 @@ class Scanner {
   identifier() {
 
     while (this.isAlphaNumeric(this.peek())) this.advance();
-
     const text = this.source.substring(this.start, this.current);
-    if (this.keywords.has(text)) {
-      this.addToken(this.keywords.get(text)!);
-      return;
-    }
-
-    this.addToken(TokenType.IDENTIFIER)
+    const tokenType: TokenType | undefined = this.keywords.get(text);
+    this.addToken(tokenType ?? TokenType.IDENTIFIER)
   }
 
   isAlphaNumeric(c: string): boolean {
@@ -290,10 +285,17 @@ class Parser {
     return expr;
   }
 
+  private commaSeries(): Expr {
+    if (this.match([TokenType.LEFT_PAREN])) {
+
+      this.consume(TokenType.LEFT_PAREN, "Expect ')' after expression");
+      return LiteralExpr(2);
+    }
+
+  }
+
   private factor(): Expr {
     let expr: Expr = this.unary();
-
-
     while (this.match([TokenType.SLASH, TokenType.STAR])) {
       const operator: Token = this.previous();
       const right: Expr = this.unary();
@@ -328,7 +330,7 @@ class Parser {
 
     if (this.match([TokenType.LEFT_PAREN])) {
       const expr: Expr = this.expression();
-      this.consume(TokenType.LEFT_PAREN, "Expect ')' after expression");
+      this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression");
       return GroupingExpr(expr);
     }
 
@@ -417,12 +419,6 @@ function run(source: string) {
   const expression = parser.parse();
   if (expression) {
     PrintAST(expression)
-  }
-
-  const expression2 = parser.parse();
-
-  if (expression2) {
-    PrintAST(expression2)
   }
 }
 

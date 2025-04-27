@@ -24,3 +24,4 @@ factor -> unary ( ( "/" | "*" ) unary )* ;
 unary -> ( "!" | "-" ) unary 
        | primary ;
 primary -> literal | grouping ;
+comma-series -> unary "(" expression, ( "," expression )* ")"
