@@ -30,8 +30,11 @@ class RuntimeException extends Error {
 class Environment {
   private variables: Map<string, any> = new Map()
 
-  get(name: Token): any {
+  get(name?: Token): any {
 
+    if (name === undefined) {
+      throw new Error("Intepreter error termination program");
+    }
 
     if (this.variables.has(name.lexeme)) {
       return this.variables.get(name.lexeme);
@@ -444,7 +447,6 @@ class Parser {
 
     try {
       if (this.match([TokenType.CHENG])) {
-        console.log("CHENG");
         return this.chengDeclaration();
       }
       return this.statement()
@@ -557,24 +559,22 @@ function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }
 
   switch (stmt.type) {
     case StmtType.Cheng:
-      const value = InterpretExpr(stmt.expr);
+      const value = InterpretExpr({ environment }, stmt.expr);
       if (stmt.name && value) {
         environment.define(stmt.name.lexeme, value)
       }
       break;
     case StmtType.Expression:
-      InterpretExpr(stmt.expr)
+      InterpretExpr({ environment }, stmt.expr)
       break;
     case StmtType.Dhinda:
-      InterpretExpr(stmt.expr);
+      console.log(InterpretExpr({ environment }, stmt.expr));
       break;
   }
 
 }
 
-function InterpretExpr(expr?: Expr): any {
-
-  const environment = new Environment();
+function InterpretExpr({ environment }: { environment: Environment }, expr?: Expr): any {
 
   const isEqual = (a: any, b: any) => {
     return a === b;
@@ -588,13 +588,13 @@ function InterpretExpr(expr?: Expr): any {
 
   switch (expr.type) {
     case 'Variable':
-      return expr.operator?.lexeme
+      return environment.get(expr.operator)
     case 'Literal':
       return expr.value;
     case 'Grouping':
       {
         if (expr?.expression !== undefined) {
-          return InterpretExpr(expr.expression)
+          return InterpretExpr({ environment }, expr.expression)
         } else {
           return undefined
         }
@@ -604,11 +604,11 @@ function InterpretExpr(expr?: Expr): any {
         let left: Expr | undefined = undefined;
         let right: Expr | undefined = undefined;
         if (expr.left !== undefined) {
-          left = InterpretExpr(expr.left)
+          left = InterpretExpr({ environment }, expr.left)
         }
 
         if (expr.right !== undefined) {
-          right = InterpretExpr(expr.right);
+          right = InterpretExpr({ environment }, expr.right);
         }
 
         if (left !== undefined && right !== undefined) {
@@ -663,7 +663,7 @@ function InterpretExpr(expr?: Expr): any {
       {
         let right: Expr | undefined = undefined;
         if (expr.right !== undefined) {
-          right = InterpretExpr(expr.right)
+          right = InterpretExpr({ environment }, expr.right)
         }
         if (right !== undefined) {
 
