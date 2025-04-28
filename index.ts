@@ -1,6 +1,6 @@
 import { parseArgs } from 'util'
 import { TokenType, Token } from './Token';
-import { BinaryExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
+import { BinaryExpr, ChengExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
 import { ChengStmt, DhindaStmt, ExpressionStmt, StmtType, type Stmt } from './Stmt';
 
 const { values } = parseArgs({
@@ -365,13 +365,17 @@ class Parser {
       return LiteralExpr(this.previous().literal)
     }
 
+    if (this.match([TokenType.IDENTIFIER])) {
+      return ChengExpr(this.previous());
+    }
+
+    if (this.match([TokenType.COMMA])) {
+      return this.commaSeries()
+    }
+
+
     if (this.match([TokenType.LEFT_PAREN])) {
-      const expr: Expr = this.tenary();
-
-      if (this.match([TokenType.COMMA])) {
-        return this.tenary()
-      }
-
+      const expr: Expr = this.commaSeries();
       this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression");
       return GroupingExpr(expr);
     }
