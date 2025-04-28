@@ -2,6 +2,7 @@ import { parseArgs } from 'util'
 import { TokenType, Token } from './Token';
 import { BinaryExpr, ChengExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
 import { ChengStmt, DhindaStmt, ExpressionStmt, StmtType, type Stmt } from './Stmt';
+import { stat } from 'fs';
 
 const { values } = parseArgs({
   args: Bun.argv,
@@ -23,6 +24,25 @@ class RuntimeException extends Error {
     super(message);
     this.name = "RuntimeException";
     this.token = operator;
+  }
+}
+
+class Environment {
+  private variables: Map<string, any> = new Map()
+
+  get(name: Token): any {
+
+
+    if (this.variables.has(name.lexeme)) {
+      return this.variables.get(name.lexeme);
+    }
+
+    throw new RuntimeException(name, `Undefined variable '${name.lexeme}.'`)
+
+  }
+
+  define(name: string, value: string): void {
+    this.variables.set(name, value);
   }
 }
 
@@ -423,7 +443,10 @@ class Parser {
   private declaration(): Stmt | null {
 
     try {
-      if (this.match([TokenType.CHENG])) return this.chengDeclaration();
+      if (this.match([TokenType.CHENG])) {
+        console.log("CHENG");
+        return this.chengDeclaration();
+      }
       return this.statement()
     } catch (e) {
       this.synchronize();
@@ -441,7 +464,7 @@ class Parser {
       initializer = this.commaSeries();
     }
 
-    this.consume(TokenType.COMMA, "Expect ';' after cheng declaration.");
+    this.consume(TokenType.SEMICOLON, "Expect ';' after cheng declaration.");
 
     return ChengStmt(name, initializer)
 
@@ -520,32 +543,52 @@ function RuntimeError(error: RuntimeException) {
 }
 
 function InterpretStmts(stmts: Stmt[]): void {
+
+  const environment = new Environment();
+
   for (const stmt of stmts) {
-    InterpretStmt(stmt);
+    InterpretStmt(stmt, { environment });
   }
+
+  console.log(environment)
 }
 
-function InterpretStmt(stmt: Stmt): void {
+function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }): void {
 
   switch (stmt.type) {
+    case StmtType.Cheng:
+      const value = InterpretExpr(stmt.expr);
+      if (stmt.name && value) {
+        environment.define(stmt.name.lexeme, value)
+      }
+      break;
     case StmtType.Expression:
       InterpretExpr(stmt.expr)
       break;
     case StmtType.Dhinda:
-      const value = InterpretExpr(stmt.expr);
-      console.log(value)
+      InterpretExpr(stmt.expr);
       break;
   }
 
 }
 
-function InterpretExpr(expr: Expr): any {
+function InterpretExpr(expr?: Expr): any {
+
+  const environment = new Environment();
 
   const isEqual = (a: any, b: any) => {
     return a === b;
   }
 
+  if (expr === undefined) {
+    return undefined;
+  }
+
+
+
   switch (expr.type) {
+    case 'Variable':
+      return expr.operator?.lexeme
     case 'Literal':
       return expr.value;
     case 'Grouping':
