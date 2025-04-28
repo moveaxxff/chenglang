@@ -1,6 +1,7 @@
+import { type } from 'os';
 import { Token } from './Token';
 
-export type ExprType = "Binary" | "Grouping" | "Literal" | "Unary";
+export type ExprType = "Binary" | "Grouping" | "Literal" | "Unary" | "Variable";
 
 export interface Expr {
   type: ExprType;
@@ -14,6 +15,10 @@ export interface Expr {
 
 export function BinaryExpr(left: Expr, operator: Token, right: Expr): Expr {
   return { type: "Binary", left, operator, right, func: () => Parenthesis(operator.lexeme, [left, right]) };
+}
+
+export function ChengExpr(name: Token): Expr {
+  return { type: "Variable", operator: name }
 }
 
 export function LiteralExpr(value: any): Expr {

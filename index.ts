@@ -1,10 +1,7 @@
 import { parseArgs } from 'util'
 import { TokenType, Token } from './Token';
 import { BinaryExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
-import { parse } from 'path';
-import { randomInt } from 'crypto';
-import { DhindaStmt, ExpressionStmt, StmtType, type Stmt } from './Stmt';
-import { which } from 'bun';
+import { ChengStmt, DhindaStmt, ExpressionStmt, StmtType, type Stmt } from './Stmt';
 
 const { values } = parseArgs({
   args: Bun.argv,
@@ -409,11 +406,40 @@ class Parser {
 
     while (!this.isAtEnd()) {
 
-      statements.push(this.statement());
-
+      const declaration = this.declaration();
+      if (declaration) {
+        statements.push(declaration);
+      }
     }
 
     return statements;
+
+  }
+
+  private declaration(): Stmt | null {
+
+    try {
+      if (this.match([TokenType.CHENG])) return this.chengDeclaration();
+      return this.statement()
+    } catch (e) {
+      this.synchronize();
+      return null;
+    }
+  }
+
+  private chengDeclaration(): Stmt {
+
+    const name: Token = this.consume(TokenType.IDENTIFIER, "Expect a variable name");
+
+    let initializer: Expr | undefined = undefined;
+
+    if (this.match([TokenType.EQUAL])) {
+      initializer = this.commaSeries();
+    }
+
+    this.consume(TokenType.COMMA, "Expect ';' after cheng declaration.");
+
+    return ChengStmt(name, initializer)
 
   }
 

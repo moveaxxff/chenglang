@@ -9,7 +9,7 @@ grouping -> '(' expression ')' ;
 unary -> ( '-' | '!' ) expression ;
 binary -> expression operator expression ;
 operator -> '+' | '-' | '*' | '/' | '>' | '>=' | '<' | '<=' | '==' | '!=' ;
-primary -> literal | grouping ;
+primary -> literal | grouping | IDENTIFIER ;
 unary -> ( '-' | '!' ) unary 
        | primary ;
 factor -> factor ( '/' | '*' ) unary 
@@ -27,8 +27,12 @@ primary -> literal | grouping ;
 comma-series -> unary "(" expression, ( "," expression )* ")"
 tenary -> comparison "?" expression ":" expression tenary
 
-program     ->  statement* EOF ;
+program     ->  declaration* EOF ;
+
+declaration -> chengDecl 
+             | statement ;
 statement   -> exprStmt
              | printStmt;
 exprStmt    -> expression ";" ;
 printStmt   -> "dhinda" expression ";" ;
+chengDecl   -> "cheng" IDENTIFIER ( "="  expression )? ";" ;

@@ -1,15 +1,18 @@
 import { type } from "os";
 import type { Expr } from "./Expr";
+import type { Token } from "./Token";
 
 export enum StmtType {
   Expression,
-  Dhinda
+  Dhinda,
+  Cheng
 }
 
 export interface Stmt {
 
   type: StmtType;
-  expr: Expr;
+  expr?: Expr;
+  name?: Token;
 }
 
 export function DhindaStmt(expr: Expr): Stmt {
@@ -22,4 +25,8 @@ export function ExpressionStmt(expr: Expr): Stmt {
 
   return { type: StmtType.Expression, expr };
 
+}
+
+export function ChengStmt(name: Token, initializer?: Expr) {
+  return { name: name, type: StmtType.Cheng, expr: initializer, }
 }
