@@ -330,7 +330,7 @@ class Parser {
 
     while (this.match([TokenType.KANA])) {
       const operator = this.previous();
-      const right = this.and();
+      const right = this.ne();
       expr = LogicalExpr(expr, operator, right);
     }
 
