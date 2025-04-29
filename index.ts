@@ -45,6 +45,7 @@ class Environment {
   }
 
   define(name: string, value: string): void {
+
     this.variables.set(name, value);
   }
 }

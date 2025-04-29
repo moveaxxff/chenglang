@@ -1,11 +1,12 @@
 
-cheng tawanda = 1 + 1 + " Tawanda Chiteshe is great";
-dhinda tawanda;
+cheng moveeaxff = 1 + 1 + " moveeaxff is great";
+dhinda moveeaxff;
 
 cheng x = 100;
 cheng y = 200;
+cheng y = 800;
 
-dhinda "x + y = " + (x + y);
+dhinda "x + y = " + (x + y + 200);
 
 dhinda "Result: " + (1 + 1);
 dhinda "Result: " + (1 < 2);
