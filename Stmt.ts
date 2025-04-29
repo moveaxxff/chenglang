@@ -6,7 +6,8 @@ export enum StmtType {
   Expression,
   Dhinda,
   Cheng,
-  Block
+  Block,
+  Dai
 }
 
 export interface Stmt {
@@ -15,10 +16,17 @@ export interface Stmt {
   expr?: Expr;
   name?: Token;
   children?: Stmt[]
+  thenStmt?: Stmt;
+  branchStmt?: Stmt;
 }
+
 
 export function BlockStmt(statements: Stmt[]): Stmt {
   return { type: StmtType.Block, children: statements };
+}
+
+export function DaiStmt(expr: Expr, thenStmt: Stmt, branchStmt: Stmt): Stmt {
+  return { type: StmtType.Dai, expr, thenStmt, branchStmt };
 }
 
 export function DhindaStmt(expr: Expr): Stmt {

@@ -36,8 +36,12 @@ program     ->  declaration* EOF ;
 declaration -> chengDecl 
              | statement ;
 statement   -> exprStmt
+             | daiStmt 
              | printStmt 
              | block ;
+
+daiStmt     -> "dai" "(" expression* ")" statement ( "pamwe"  statement )? ; 
+
 block       -> "{" declaration* "}" ;
 exprStmt    -> expression ";" ;
 printStmt   -> "dhinda" expression ";" ;
