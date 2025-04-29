@@ -32,7 +32,6 @@ class Environment {
   get(name?: Token): any {
 
     if (name === undefined) {
-      console.log(name)
       return undefined;
     }
 
@@ -311,8 +310,6 @@ class Parser {
         if (name === undefined) {
           throw new Error("Chenglang error.");
         }
-        console.log(name)
-        console.log(value)
         return AssignExpr(name, value);
       }
 
@@ -623,14 +620,13 @@ function InterpretExpr({ environment }: { environment: Environment }, expr?: Exp
 
   switch (expr.type) {
     case 'Assign':
-      console.log(expr)
       if (expr.operator === undefined)
         return undefined;
       if (expr.right === undefined)
         return undefined;
       return environment.assign(expr.operator, InterpretExpr({ environment }, expr.right));
     case 'Variable':
-      return environment.get(expr.operator)
+      return environment.get(expr.operator);
     case 'Literal':
       return expr.value;
     case 'Grouping':
