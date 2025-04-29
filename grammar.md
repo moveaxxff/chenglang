@@ -36,7 +36,9 @@ program     ->  declaration* EOF ;
 declaration -> chengDecl 
              | statement ;
 statement   -> exprStmt
-             | printStmt;
+             | printStmt 
+             | block ;
+block       -> "{" declaration* "}" ;
 exprStmt    -> expression ";" ;
 printStmt   -> "dhinda" expression ";" ;
 chengDecl   -> "cheng" IDENTIFIER ( "="  expression )? ";" ;
