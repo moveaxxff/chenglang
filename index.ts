@@ -32,6 +32,7 @@ class Environment {
   get(name?: Token): any {
 
     if (name === undefined) {
+      console.log(name)
       return undefined;
     }
 
@@ -299,6 +300,7 @@ class Parser {
   private assignment(): Expr {
 
     const expr: Expr = this.equality();
+
 
     if (this.match([TokenType.EQUAL])) {
       const equals = this.previous();
@@ -621,16 +623,12 @@ function InterpretExpr({ environment }: { environment: Environment }, expr?: Exp
 
   switch (expr.type) {
     case 'Assign':
+      console.log(expr)
       if (expr.operator === undefined)
         return undefined;
       if (expr.right === undefined)
         return undefined;
-      return environment.assign(expr.operator, InterpretExpr({ environment }, expr.right))
-    case 'Grouping':
-    case 'Literal':
-    case 'Unary':
-    case 'Variable':
-    case 'Assign':
+      return environment.assign(expr.operator, InterpretExpr({ environment }, expr.right));
     case 'Variable':
       return environment.get(expr.operator)
     case 'Literal':
