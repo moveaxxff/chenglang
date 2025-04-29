@@ -51,9 +51,11 @@ class Environment {
     this.variables.set(name.lexeme, value);
   }
 
-  define(name: string, value: any): void {
-
-    this.variables.set(name, value);
+  define(name: Token, value: any): void {
+    if (this.variables.has(name.lexeme)) {
+      throw new RuntimeException(name, `redefinition of '${name.lexeme}'`)
+    }
+    this.variables.set(name.lexeme, value);
   }
 }
 
@@ -593,7 +595,7 @@ function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }
     case StmtType.Cheng:
       const value = InterpretExpr({ environment }, stmt.expr);
       if (stmt.name && value) {
-        environment.define(stmt.name.lexeme, value)
+        environment.define(stmt.name, value)
       }
       break;
     case StmtType.Expression:
