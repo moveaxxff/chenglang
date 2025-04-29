@@ -27,14 +27,23 @@ class RuntimeException extends Error {
 }
 
 class Environment {
+
+  private enclosing?: Environment;
+
   private variables: Map<string, any> = new Map()
   private tokens: Map<string, Token> = new Map();
+
+  constructor(enclosing?: Environment) {
+    this.enclosing = enclosing;
+  }
 
   get(name?: Token): any {
 
     if (name === undefined) {
       return undefined;
     }
+
+    if (this.enclosing !== undefined) return this.enclosing.get(name);
 
     if (this.variables.has(name.lexeme)) {
       return this.variables.get(name.lexeme);
@@ -47,6 +56,11 @@ class Environment {
   assign(name: Token, value: any) {
     if (!this.variables.has(name.lexeme)) {
       throw new RuntimeException(name, `Undefined variable '${name.lexeme}'`)
+    }
+
+    if (this.enclosing !== undefined) {
+      this.enclosing.assign(name, value);
+      return;
     }
 
     this.variables.set(name.lexeme, value);
