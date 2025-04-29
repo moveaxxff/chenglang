@@ -1,12 +1,14 @@
 
 cheng value = "tawanda";
 value = 1 + 90;
-cheng value = 1;
 dhinda value;
 
 cheng x = 100;
 cheng y = 200;
-cheng y = 800;
+
+{
+  dhinda "Inside block: " + x;
+}
 
 dhinda "x + y = " + (x + y + 200);
 

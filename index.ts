@@ -463,7 +463,9 @@ class Parser {
   statement(): Stmt {
 
     if (this.match([TokenType.DHINDA])) return this.dhindaStatement();
-    if (this.match([TokenType.LEFT_BRACE])) return BlockStmt(this.block());
+    if (this.match([TokenType.LEFT_BRACE])) {
+      return BlockStmt(this.block());
+    };
 
     return this.expressionStatement();
 
@@ -473,7 +475,7 @@ class Parser {
 
     const statements: Stmt[] = [];
 
-    if (this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
+    while (!this.check(TokenType.RIGHT_BRACE)) {
       const declaration = this.declaration();
       if (declaration !== null) {
         statements.push(declaration);
@@ -631,14 +633,9 @@ function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }
 
   switch (stmt.type) {
     case StmtType.Block:
-      if (stmt.children === undefined)
-        return;
-      try {
-        for (const child of stmt.children) {
-          InterpretStmt(child, { environment: new Environment(environment) })
-        }
-      } finally {
-        InterpretStmt(stmt, { environment });
+      if (stmt.children === undefined) return;
+      for (const child of stmt.children) {
+        InterpretStmt(child, { environment: new Environment(environment) })
       }
       break;
     case StmtType.Cheng:
