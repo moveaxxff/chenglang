@@ -44,15 +44,17 @@ class Environment {
       return undefined;
     }
 
+
+    if (this.variables.has(name.lexeme)) {
+      return this.variables.get(name.lexeme);
+    }
+
     if (this.enclosing !== undefined) {
       if (this.enclosing.variables.has(name.lexeme)) {
         return this.enclosing.variables.get(name.lexeme);
       }
     }
 
-    if (this.variables.has(name.lexeme)) {
-      return this.variables.get(name.lexeme);
-    }
 
     throw new RuntimeException(name, `Undefined variable '${name.lexeme}.'`)
 
