@@ -323,6 +323,14 @@ class Parser {
 
   private ne(): Expr {
     let expr = this.equality();
+
+    while (this.match([TokenType.NE])) {
+      const operator = this.previous();
+      const right = this.equality();
+      expr = LogicalExpr(expr, operator, right);
+    }
+
+    return expr;
   }
 
   private kana(): Expr {
