@@ -1,6 +1,6 @@
 import { Token } from './Token';
 
-export type ExprType = "Binary" | "Grouping" | "Literal" | "Unary" | "Variable" | "Assign";
+export type ExprType = "Binary" | "Grouping" | "Literal" | "Unary" | "Variable" | "Assign" | "Logical";
 
 export interface Expr {
   type: ExprType;
@@ -13,6 +13,10 @@ export interface Expr {
 }
 
 export function BinaryExpr(left: Expr, operator: Token, right: Expr): Expr {
+  return { type: "Binary", left, operator, right, func: () => Parenthesis(operator.lexeme, [left, right]) };
+}
+
+export function LogicalExpr(left: Expr, operator: Token, right: Expr): Expr {
   return { type: "Binary", left, operator, right, func: () => Parenthesis(operator.lexeme, [left, right]) };
 }
 
