@@ -11,6 +11,13 @@ cheng y = 200;
   cheng x = 300;
   dhinda "Inside block: " + (x + z);
   dhinda "Hello";
+  {
+    cheng x = 90;
+    dhinda "Inside block 2" + x;
+     {
+       dhinda "Block 3";
+     }
+  }
 }
 
 
