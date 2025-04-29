@@ -44,13 +44,9 @@ class Environment {
       return undefined;
     }
 
-    // if (name.lexeme === "z") {
-    //   console.log(this)
-    // }
-
     if (this.enclosing !== undefined) {
       if (this.enclosing.variables.has(name.lexeme)) {
-        return this.variables.get(name.lexeme);
+        return this.enclosing.variables.get(name.lexeme);
       }
     }
 
@@ -645,7 +641,6 @@ function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }
       for (const child of stmt.children) {
         InterpretStmt(child, { environment: blockEnv });
       }
-      console.log(blockEnv)
       break;
     case StmtType.Cheng:
       const value = InterpretExpr({ environment }, stmt.expr);
