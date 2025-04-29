@@ -17,7 +17,7 @@ export function BinaryExpr(left: Expr, operator: Token, right: Expr): Expr {
 }
 
 export function AssignExpr(name: Token, assigment: Expr): Expr {
-  return { type: "Assign", expression: assigment, func: () => Parenthesis(name.lexeme, [assigment]) }
+  return { type: "Assign", right: assigment, operator: name, func: () => Parenthesis(name.lexeme, [assigment]) }
 }
 
 export function ChengExpr(name: Token): Expr {

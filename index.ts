@@ -309,6 +309,8 @@ class Parser {
         if (name === undefined) {
           throw new Error("Chenglang error.");
         }
+        console.log(name)
+        console.log(value)
         return AssignExpr(name, value);
       }
 

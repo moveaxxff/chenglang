@@ -1,6 +1,6 @@
 
-cheng moveeaxff = 1 + 1 + " moveeaxff is great";
-dhinda moveeaxff;
+cheng value = "tawanda";
+dhinda value;
 
 cheng x = 100;
 cheng y = 200;
