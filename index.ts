@@ -1,6 +1,6 @@
 import { parseArgs } from 'util'
 import { TokenType, Token } from './Token';
-import { AssignExpr, BinaryExpr, ChengExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
+import { AssignExpr, BinaryExpr, ChengExpr, GroupingExpr, LiteralExpr, LogicalExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
 import { BlockStmt, ChengStmt, DaiStmt, DhindaStmt, ExpressionStmt, StmtType, type Stmt } from './Stmt';
 import { env } from 'process';
 
@@ -320,9 +320,26 @@ class Parser {
     return this.assignment();
   }
 
+
+  private ne(): Expr {
+    let expr = this.equality();
+  }
+
+  private kana(): Expr {
+    let expr = this.ne();
+
+    while (this.match([TokenType.KANA])) {
+      const operator = this.previous();
+      const right = this.and();
+      expr = LogicalExpr(expr, operator, right);
+    }
+
+    return expr;
+  }
+
   private assignment(): Expr {
 
-    const expr: Expr = this.equality();
+    const expr: Expr = this.kana();
 
 
     if (this.match([TokenType.EQUAL])) {
