@@ -28,6 +28,7 @@ class RuntimeException extends Error {
 
 class Environment {
   private variables: Map<string, any> = new Map()
+  private tokens: Map<string, Token> = new Map();
 
   get(name?: Token): any {
 
@@ -53,8 +54,12 @@ class Environment {
 
   define(name: Token, value: any): void {
     if (this.variables.has(name.lexeme)) {
+      const token = this.tokens.get(name.lexeme);
+      console.error(`previous definition of '${name.lexeme}' at [line ${token?.line}]`)
       throw new RuntimeException(name, `redefinition of '${name.lexeme}'`)
+
     }
+    this.tokens.set(name.lexeme, name);
     this.variables.set(name.lexeme, value);
   }
 }
@@ -575,7 +580,7 @@ function report(line: number, where: string, message: string) {
 }
 
 function RuntimeError(error: RuntimeException) {
-  console.error(`${error.message} \n[line ${error?.token?.line}]`)
+  console.error(`${error.message} [line ${error?.token?.line}]`)
 }
 
 function InterpretStmts(stmts: Stmt[]): void {

@@ -1,6 +1,7 @@
 
 cheng value = "tawanda";
 value = 1 + 90;
+cheng value = 1;
 dhinda value;
 
 cheng x = 100;
