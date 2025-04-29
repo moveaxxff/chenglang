@@ -1,7 +1,7 @@
 import { parseArgs } from 'util'
 import { TokenType, Token } from './Token';
 import { AssignExpr, BinaryExpr, ChengExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
-import { ChengStmt, DhindaStmt, ExpressionStmt, StmtType, type Stmt } from './Stmt';
+import { BlockStmt, ChengStmt, DhindaStmt, ExpressionStmt, StmtType, type Stmt } from './Stmt';
 
 const { values } = parseArgs({
   args: Bun.argv,
@@ -463,9 +463,26 @@ class Parser {
   statement(): Stmt {
 
     if (this.match([TokenType.DHINDA])) return this.dhindaStatement();
+    if (this.match([TokenType.LEFT_BRACE])) return BlockStmt(this.block());
 
     return this.expressionStatement();
 
+  }
+
+  private block(): Stmt[] {
+
+    const statements: Stmt[] = [];
+
+    if (this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
+      const declaration = this.declaration();
+      if (declaration !== null) {
+        statements.push(declaration);
+      }
+    }
+
+    this.consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
+
+    return statements;
   }
 
   private dhindaStatement(): Stmt {
@@ -473,6 +490,8 @@ class Parser {
     this.consume(TokenType.SEMICOLON, "Expect ';' after value.");
     return DhindaStmt(value);
   }
+
+
 
 
   private expressionStatement(): Stmt {
@@ -611,6 +630,17 @@ function InterpretStmts(stmts: Stmt[]): void {
 function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }): void {
 
   switch (stmt.type) {
+    case StmtType.Block:
+      if (stmt.children === undefined)
+        return;
+      try {
+        for (const child of stmt.children) {
+          InterpretStmt(child, { environment: new Environment(environment) })
+        }
+      } finally {
+        InterpretStmt(stmt, { environment });
+      }
+      break;
     case StmtType.Cheng:
       const value = InterpretExpr({ environment }, stmt.expr);
       if (stmt.name && value) {

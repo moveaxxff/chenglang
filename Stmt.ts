@@ -5,7 +5,8 @@ import type { Token } from "./Token";
 export enum StmtType {
   Expression,
   Dhinda,
-  Cheng
+  Cheng,
+  Block
 }
 
 export interface Stmt {
@@ -13,6 +14,11 @@ export interface Stmt {
   type: StmtType;
   expr?: Expr;
   name?: Token;
+  children?: Stmt[]
+}
+
+export function BlockStmt(statements: Stmt[]): Stmt {
+  return { type: StmtType.Block, children: statements };
 }
 
 export function DhindaStmt(expr: Expr): Stmt {
