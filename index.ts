@@ -1,8 +1,7 @@
 import { parseArgs } from 'util'
 import { TokenType, Token } from './Token';
-import { BinaryExpr, ChengExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
+import { AssignExpr, BinaryExpr, ChengExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
 import { ChengStmt, DhindaStmt, ExpressionStmt, StmtType, type Stmt } from './Stmt';
-import { stat } from 'fs';
 
 const { values } = parseArgs({
   args: Bun.argv,
@@ -33,7 +32,7 @@ class Environment {
   get(name?: Token): any {
 
     if (name === undefined) {
-      throw new Error("Intepreter error termination program");
+      return undefined;
     }
 
     if (this.variables.has(name.lexeme)) {
@@ -44,7 +43,15 @@ class Environment {
 
   }
 
-  define(name: string, value: string): void {
+  assign(name: Token, value: any) {
+    if (!this.variables.has(name.lexeme)) {
+      throw new RuntimeException(name, `Undefined variable '${name.lexeme}'`)
+    }
+
+    this.variables.set(name.lexeme, value);
+  }
+
+  define(name: string, value: any): void {
 
     this.variables.set(name, value);
   }
@@ -286,7 +293,30 @@ class Parser {
   }
 
   private expression(): Expr {
-    return this.equality();
+    return this.assignment();
+  }
+
+  private assignment(): Expr {
+
+    const expr: Expr = this.equality();
+
+    if (this.match([TokenType.EQUAL])) {
+      const equals = this.previous();
+      const value = this.assignment();
+
+      if (expr.type === "Variable") {
+        const name = expr.operator;
+        if (name === undefined) {
+          throw new Error("Chenglang error.");
+        }
+        return AssignExpr(name, value);
+      }
+
+
+      throw new RuntimeException(equals, "Invalid assignment target.");
+    }
+
+    return expr;
   }
 
   private equality(): Expr {
@@ -542,7 +572,7 @@ function report(line: number, where: string, message: string) {
 }
 
 function RuntimeError(error: RuntimeException) {
-  console.error(`${error.message} \n[line ${error.token.line}]`)
+  console.error(`${error.message} \n[line ${error?.token?.line}]`)
 }
 
 function InterpretStmts(stmts: Stmt[]): void {
@@ -588,6 +618,17 @@ function InterpretExpr({ environment }: { environment: Environment }, expr?: Exp
 
 
   switch (expr.type) {
+    case 'Assign':
+      if (expr.operator === undefined)
+        return undefined;
+      if (expr.right === undefined)
+        return undefined;
+      return environment.assign(expr.operator, InterpretExpr({ environment }, expr.right))
+    case 'Grouping':
+    case 'Literal':
+    case 'Unary':
+    case 'Variable':
+    case 'Assign':
     case 'Variable':
       return environment.get(expr.operator)
     case 'Literal':
