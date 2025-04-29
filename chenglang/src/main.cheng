@@ -7,8 +7,10 @@ cheng x = 100;
 cheng y = 200;
 
 {
-  dhinda "Inside block: " + x;
+  cheng z = 10;
+  dhinda "Inside block: " + x + z;
 }
+
 
 dhinda "x + y = " + (x + y + 200);
 

@@ -2,6 +2,7 @@ import { parseArgs } from 'util'
 import { TokenType, Token } from './Token';
 import { AssignExpr, BinaryExpr, ChengExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
 import { BlockStmt, ChengStmt, DhindaStmt, ExpressionStmt, StmtType, type Stmt } from './Stmt';
+import { env } from 'process';
 
 const { values } = parseArgs({
   args: Bun.argv,
@@ -28,7 +29,7 @@ class RuntimeException extends Error {
 
 class Environment {
 
-  private enclosing?: Environment;
+  private enclosing?: Environment = undefined;
 
   private variables: Map<string, any> = new Map()
   private tokens: Map<string, Token> = new Map();
@@ -43,7 +44,15 @@ class Environment {
       return undefined;
     }
 
-    if (this.enclosing !== undefined) return this.enclosing.get(name);
+    // if (name.lexeme === "z") {
+    //   console.log(this)
+    // }
+
+    if (this.enclosing !== undefined) {
+      if (this.enclosing.variables.has(name.lexeme)) {
+        return this.variables.get(name.lexeme);
+      }
+    }
 
     if (this.variables.has(name.lexeme)) {
       return this.variables.get(name.lexeme);
@@ -58,11 +67,6 @@ class Environment {
       throw new RuntimeException(name, `Undefined variable '${name.lexeme}'`)
     }
 
-    if (this.enclosing !== undefined) {
-      this.enclosing.assign(name, value);
-      return;
-    }
-
     this.variables.set(name.lexeme, value);
   }
 
@@ -73,6 +77,7 @@ class Environment {
       throw new RuntimeException(name, `redefinition of '${name.lexeme}'`)
 
     }
+
     this.tokens.set(name.lexeme, name);
     this.variables.set(name.lexeme, value);
   }
@@ -631,12 +636,16 @@ function InterpretStmts(stmts: Stmt[]): void {
 
 function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }): void {
 
+
   switch (stmt.type) {
+
     case StmtType.Block:
+      const blockEnv = new Environment(environment);
       if (stmt.children === undefined) return;
       for (const child of stmt.children) {
-        InterpretStmt(child, { environment: new Environment(environment) })
+        InterpretStmt(child, { environment: blockEnv });
       }
+      console.log(blockEnv)
       break;
     case StmtType.Cheng:
       const value = InterpretExpr({ environment }, stmt.expr);
