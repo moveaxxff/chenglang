@@ -1,7 +1,7 @@
 import { parseArgs } from 'util'
 import { TokenType, Token } from './Token';
 import { AssignExpr, BinaryExpr, ChengExpr, GroupingExpr, LiteralExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
-import { BlockStmt, ChengStmt, DhindaStmt, ExpressionStmt, StmtType, type Stmt } from './Stmt';
+import { BlockStmt, ChengStmt, DaiStmt, DhindaStmt, ExpressionStmt, StmtType, type Stmt } from './Stmt';
 import { env } from 'process';
 
 const { values } = parseArgs({
@@ -465,6 +465,7 @@ class Parser {
 
   statement(): Stmt {
 
+    if (this.match([TokenType.DAI])) return this.daiStatement();
     if (this.match([TokenType.DHINDA])) return this.dhindaStatement();
     if (this.match([TokenType.LEFT_BRACE])) {
       return BlockStmt(this.block());
@@ -472,6 +473,19 @@ class Parser {
 
     return this.expressionStatement();
 
+  }
+
+  daiStatement(): Stmt {
+    const condition = this.expression();
+
+    let daiStmt: Stmt = this.statement();
+    let pamweStmt: Stmt | undefined = undefined;
+
+    if (this.match([TokenType.PAMWE])) {
+      pamweStmt = this.statement();
+    }
+
+    return DaiStmt(condition, daiStmt, pamweStmt);
   }
 
   private block(): Stmt[] {
@@ -636,7 +650,17 @@ function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }
 
 
   switch (stmt.type) {
+    case StmtType.Dai:
 
+      if (stmt.thenStmt === undefined)
+        return;
+
+      if (InterpretExpr({ environment }, stmt.expr)) {
+        InterpretStmt(stmt.thenStmt, { environment });
+      } else if (stmt.branchStmt !== undefined) {
+        InterpretStmt(stmt.branchStmt, { environment });
+      }
+      break;
     case StmtType.Block:
       const blockEnv = new Environment(environment);
       if (stmt.children === undefined) return;

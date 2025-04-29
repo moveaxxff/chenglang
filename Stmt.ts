@@ -25,7 +25,7 @@ export function BlockStmt(statements: Stmt[]): Stmt {
   return { type: StmtType.Block, children: statements };
 }
 
-export function DaiStmt(expr: Expr, thenStmt: Stmt, branchStmt: Stmt): Stmt {
+export function DaiStmt(expr: Expr, thenStmt: Stmt, branchStmt?: Stmt): Stmt {
   return { type: StmtType.Dai, expr, thenStmt, branchStmt };
 }
 

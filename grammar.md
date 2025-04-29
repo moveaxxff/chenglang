@@ -19,7 +19,7 @@ factor -> unary ( ( "/" | "*" ) unary )* ;
 
 expression -> assignment ;
 
-assignment -> IDENTIFIER "=" assignment | equality ; 
+assignment -> IDENTIFIER "=" assignment | logic_kana ; 
 
 equality -> comparison ( ( "!=" | "==" ) comparison )* ;
 comparison -> term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
@@ -41,6 +41,8 @@ statement   -> exprStmt
              | block ;
 
 daiStmt     -> "dai" "(" expression* ")" statement ( "pamwe"  statement )? ; 
+logic_kana  -> logic_ne ( "kana" logic_ne )* ;
+logic_ne    -> equality ( "ne" equality )* ;
 
 block       -> "{" declaration* "}" ;
 exprStmt    -> expression ";" ;

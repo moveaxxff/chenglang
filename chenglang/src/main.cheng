@@ -1,4 +1,10 @@
 
+dai (1 == 2) {
+  dhinda "1 is equals to 1";
+} pamwe {
+  dhinda "not true";
+}
+
 cheng value = "tawanda";
 value = 1 + 90;
 dhinda value;
