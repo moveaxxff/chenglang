@@ -40,7 +40,7 @@ statement   -> exprStmt
              | printStmt 
              | block ;
 
-daiStmt     -> "dai" "(" expression* ")" statement ( "pamwe"  statement )? ; 
+daiStmt     -> "dai"  expression* statement ( "pamwe"  statement )? ; 
 logic_kana  -> logic_ne ( "kana" logic_ne )* ;
 logic_ne    -> equality ( "ne" equality )* ;
 

@@ -5,7 +5,16 @@ dai (1 == 2) {
   dhinda "not true";
 }
 
-dhinda 1 == 1 ne 1 == 1;
+dhinda "left" ne "right";
+dhinda "left" kana "right";
+
+dai (chokwadi ne chokwadi) {
+  dhinda "ne operator is now working";
+}
+
+dai (chokwadi kana kunyepa) {
+  dhinda "kana operator is now working";
+}
 
 cheng value = "tawanda";
 value = 1 + 90;
