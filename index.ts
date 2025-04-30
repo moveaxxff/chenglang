@@ -45,10 +45,6 @@ class Environment {
       return undefined;
     }
 
-    if (name.lexeme === "outClock") {
-      console.log(this)
-    }
-
     let tempEnv: Environment | undefined = this;
     while (tempEnv !== undefined) {
       if (tempEnv.variables.has(name.lexeme)) {
@@ -538,7 +534,7 @@ class Parser {
 
     let body = this.statement();
 
-    console.log(body)
+    // console.log(body)
 
     if (body) {
       body = BlockStmt([body, ExpressionStmt(increment)]);
