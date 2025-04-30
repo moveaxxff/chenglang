@@ -584,10 +584,11 @@ class Parser {
 
     this.consume(TokenType.SEMICOLON, "Expect ';' after cheng declaration.");
 
-    if (initializer === undefined)
+    if (initializer === null) {
       error(name.line, "initializer is undefined")
+    }
 
-    return ChengStmt(name, initializer)
+    return ChengStmt(name, initializer as Expr)
 
   }
 
@@ -678,10 +679,7 @@ function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }
 
 
   switch (stmt.type) {
-    case StmtType.Dai:
-
-      if (stmt.thenStmt === undefined)
-        return;
+    case "Dai":
 
       if (InterpretExpr({ environment }, stmt.expr)) {
         InterpretStmt(stmt.thenStmt, { environment });
@@ -689,23 +687,22 @@ function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }
         InterpretStmt(stmt.branchStmt, { environment });
       }
       break;
-    case StmtType.Block:
+    case "Block":
       const blockEnv = new Environment(environment);
-      if (stmt.children === undefined) return;
       for (const child of stmt.children) {
         InterpretStmt(child, { environment: blockEnv });
       }
       break;
-    case StmtType.Cheng:
+    case "Cheng":
       const value = InterpretExpr({ environment }, stmt.expr);
       if (stmt.name && value) {
         environment.define(stmt.name, value)
       }
       break;
-    case StmtType.Expression:
+    case "Expression":
       InterpretExpr({ environment }, stmt.expr)
       break;
-    case StmtType.Dhinda:
+    case "Dhinda":
       console.log(InterpretExpr({ environment }, stmt.expr));
       break;
   }
