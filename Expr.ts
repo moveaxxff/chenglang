@@ -17,7 +17,7 @@ export function BinaryExpr(left: Expr, operator: Token, right: Expr): Expr {
 }
 
 export function LogicalExpr(left: Expr, operator: Token, right: Expr): Expr {
-  return { type: "Binary", left, operator, right, func: () => Parenthesis(operator.lexeme, [left, right]) };
+  return { type: "Logical", left, operator, right, func: () => Parenthesis(operator.lexeme, [left, right]) };
 }
 
 export function AssignExpr(name: Token, assigment: Expr): Expr {

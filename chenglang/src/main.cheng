@@ -5,6 +5,8 @@ dai (1 == 2) {
   dhinda "not true";
 }
 
+dhinda 1 == 1 ne 1 == 1;
+
 cheng value = "tawanda";
 value = 1 + 90;
 dhinda value;

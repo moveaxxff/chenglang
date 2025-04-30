@@ -730,13 +730,19 @@ function InterpretExpr({ environment }: { environment: Environment }, expr?: Exp
       if (expr.operator === undefined)
         return undefined
 
-      const left = InterpretExpr({ environment }, expr);
+      console.log("LOGICAL");
+
+      const left = InterpretExpr({ environment }, expr.left);
       if (expr.operator.type === TokenType.KANA) {
         if (left) return left;
       } else {
         if (!left) return left;
       }
-      return InterpretExpr({ environment }, expr.right)
+      const right = InterpretExpr({ environment }, expr.right);
+
+      console.log(right);
+
+      return right;
     case 'Assign':
       if (expr.operator === undefined)
         return undefined;
