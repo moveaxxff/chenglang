@@ -36,11 +36,13 @@ program     ->  declaration* EOF ;
 declaration -> chengDecl 
              | statement ;
 statement   -> exprStmt
-             | daiStmt 
+             | daiStmt
+             | apoStmt
              | printStmt 
              | block ;
 
-daiStmt     -> "dai"  expression* statement ( "pamwe"  statement )? ; 
+daiStmt     -> "dai"  expression* statement ( "pamwe"  statement )? ;
+apoStmt     -> "apo"  expression statement ;
 logic_kana  -> logic_ne ( "kana" logic_ne )* ;
 logic_ne    -> equality ( "ne" equality )* ;
 

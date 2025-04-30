@@ -10,37 +10,53 @@ export enum StmtType {
   Dai
 }
 
-export interface Stmt {
+export interface _Stmt {
 
   type: StmtType;
   expr?: Expr;
   name?: Token;
-  children?: Stmt[]
-  thenStmt?: Stmt;
+}
+
+export interface BlockStmt {
+  children: Stmt[];
+}
+
+export interface ExprStmt {
+  expr: Expr;
+}
+
+export interface DaiStmt extends ExprStmt {
+  thenStmt: Stmt;
   branchStmt?: Stmt;
 }
 
+export interface ChengStmt extends ExprStmt {
+  name: Token;
+}
+
+
+export type Stmt = BlockStmt | DaiStmt | ExprStmt | ChengStmt;
 
 export function BlockStmt(statements: Stmt[]): Stmt {
-  return { type: StmtType.Block, children: statements };
+  return { children: statements };
 }
 
 export function DaiStmt(expr: Expr, thenStmt: Stmt, branchStmt?: Stmt): Stmt {
-  return { type: StmtType.Dai, expr, thenStmt, branchStmt };
+  return { expr, thenStmt, branchStmt };
 }
 
 export function DhindaStmt(expr: Expr): Stmt {
 
-  return { type: StmtType.Dhinda, expr };
+  return { expr };
 
 }
 
 export function ExpressionStmt(expr: Expr): Stmt {
 
-  return { type: StmtType.Expression, expr };
+  return { expr };
 
 }
 
-export function ChengStmt(name: Token, initializer?: Expr) {
-  return { name: name, type: StmtType.Cheng, expr: initializer, }
+export function ChengStmt(name: Token, expr: Expr): Stmt {
+  return { name: name, expr, }
 }
