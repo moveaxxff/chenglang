@@ -500,7 +500,7 @@ class Parser {
   statement(): Stmt {
 
 
-    if (this.match([TokenType.CHIN]))  return this.chinStatement();
+    if (this.match([TokenType.CHIN])) return this.chinStatement();
     if (this.match([TokenType.DAI])) return this.daiStatement();
     if (this.match([TokenType.DHINDA])) return this.dhindaStatement();
     if (this.match([TokenType.APO])) return this.apoStatement();
@@ -516,9 +516,6 @@ class Parser {
     let initializer: Stmt | undefined = undefined;
 
     if (this.match([TokenType.SEMICOLON])) {
-      console.log(
-        "HAHAHAHAH MA"
-      )
       initializer = undefined;
     } else if (this.match([TokenType.CHENG])) {
       initializer = this.chengDeclaration();
@@ -527,23 +524,13 @@ class Parser {
     }
 
     let condition: Expr | undefined = undefined;
-    console.log("HAHAHA 22")
-    console.log(this.peek())
     if (!this.check(TokenType.SEMICOLON)) {
-      console.log(
-        "HAHAH"
-      )
+
       condition = this.commaSeries();
       console.log(condition)
     }
 
     this.consume(TokenType.SEMICOLON, "Expect ';' after loop condition. ");
-
-    console.log(
-      "HAHAHA @@@"
-    )
-    console.log(this.peek())
-
     let increment: Expr | undefined = undefined;
 
     if (condition) {
@@ -552,10 +539,6 @@ class Parser {
 
 
     let body = this.statement();
-    console.log(
-      "BODYY HAHAHAH"
-    )
-
     if (increment) {
       body = BlockStmt([body, ExpressionStmt(increment)]);
     }
@@ -564,15 +547,10 @@ class Parser {
 
     body = ApoStmt(condition, body);
 
-    // console.log(JSON.stringify(body, null, 2));
 
     if (initializer !== undefined) {
       body = BlockStmt([initializer, body]);
     }
-
-    Bun.write("./debug.json", JSON.stringify(body, null, 2));
-
-    console.log("RETIURN APO")
 
     return ApoStmt(LiteralExpr(true), DhindaStmt(LiteralExpr("Hello world")));
 
@@ -607,8 +585,6 @@ class Parser {
         statements.push(declaration);
       }
     }
-
-    Bun.write("./statements.json", JSON.stringify(statements, null, 2));
 
     this.consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
 
@@ -767,8 +743,6 @@ function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }
     case 'Apo':
 
       const expr = InterpretExpr({ environment }, stmt.expr);
-      console.log(expr)
-      console.log("HAHAHAH INSIDE APO STATEMENT")
       while (expr) {
         InterpretStmt(stmt.body, { environment })
       }
