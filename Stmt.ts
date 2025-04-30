@@ -30,8 +30,16 @@ export interface ChengStmt extends Omit<ExprStmt, "type"> {
   name: Token;
 }
 
+export interface ApoStmt extends Omit<ExprStmt, "type"> {
+  type: "Apo"
+  body: Stmt;
+}
 
-export type Stmt = BlockStmt | DaiStmt | ExprStmt | ChengStmt | DhindaStmt;
+export type Stmt = BlockStmt | DaiStmt | ExprStmt | ChengStmt | DhindaStmt | ApoStmt;
+
+export function ApoStmt(expr: Expr, body: Stmt): Stmt {
+  return { type: "Apo", expr, body };
+}
 
 export function BlockStmt(statements: Stmt[]): Stmt {
   return { type: "Block", children: statements };

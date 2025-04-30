@@ -868,10 +868,13 @@ async function main() {
     return;
   }
 
-
   const file = Bun.file(values.file);
   const source = await file.text();
+  console.time("Intepretting and parsing");
+
   run(source);
+
+  console.timeEnd("Intepretting and parsing");
 
 }
 
