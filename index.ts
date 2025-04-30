@@ -1,8 +1,7 @@
-import { parseArgs } from 'util'
+import { parseArgs } from 'util';
 import { TokenType, Token } from './Token';
 import { AssignExpr, BinaryExpr, ChengExpr, GroupingExpr, LiteralExpr, LogicalExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
-import { BlockStmt, ChengStmt, DaiStmt, DhindaStmt, ExpressionStmt, StmtType, type Stmt } from './Stmt';
-import { env } from 'process';
+import { ApoStmt, BlockStmt, ChengStmt, DaiStmt, DhindaStmt, ExpressionStmt, StmtType, type Stmt } from './Stmt';
 
 const { values } = parseArgs({
   args: Bun.argv,
@@ -492,6 +491,7 @@ class Parser {
 
     if (this.match([TokenType.DAI])) return this.daiStatement();
     if (this.match([TokenType.DHINDA])) return this.dhindaStatement();
+    if (this.match([TokenType.APO])) return this.apoStatement();
     if (this.match([TokenType.LEFT_BRACE])) {
       return BlockStmt(this.block());
     };
@@ -511,6 +511,12 @@ class Parser {
     }
 
     return DaiStmt(condition, daiStmt, pamweStmt);
+  }
+
+  private apoStatement(): Stmt {
+    const condition = this.expression();
+    const body = this.statement();
+    return ApoStmt(condition, body);
   }
 
   private block(): Stmt[] {
