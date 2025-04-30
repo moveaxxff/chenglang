@@ -584,6 +584,9 @@ class Parser {
 
     this.consume(TokenType.SEMICOLON, "Expect ';' after cheng declaration.");
 
+    if (initializer === undefined)
+      error(name.line, "initializer is undefined")
+
     return ChengStmt(name, initializer)
 
   }

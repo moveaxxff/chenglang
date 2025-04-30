@@ -15,7 +15,7 @@ export interface ExprStmt {
   expr: Expr;
 }
 
-export interface DhindaStmt extends Omit<Expression, "type"> {
+export interface DhindaStmt extends Omit<ExprStmt, "type"> {
   type: "Dhinda";
 }
 
@@ -31,7 +31,7 @@ export interface ChengStmt extends Omit<ExprStmt, "type"> {
 }
 
 
-export type Stmt = BlockStmt | DaiStmt | ExprStmt | ChengStmt;
+export type Stmt = BlockStmt | DaiStmt | ExprStmt | ChengStmt | DhindaStmt;
 
 export function BlockStmt(statements: Stmt[]): Stmt {
   return { type: "Block", children: statements };
