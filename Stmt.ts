@@ -1,36 +1,32 @@
-import { type } from "os";
+import type { Omit } from "@prisma/client/runtime/library";
 import type { Expr } from "./Expr";
 import type { Token } from "./Token";
+import type { Expression } from "typescript";
 
-export enum StmtType {
-  Expression,
-  Dhinda,
-  Cheng,
-  Block,
-  Dai
-}
 
-export interface _Stmt {
-
-  type: StmtType;
-  expr?: Expr;
-  name?: Token;
-}
 
 export interface BlockStmt {
+  type: "Block";
   children: Stmt[];
 }
 
 export interface ExprStmt {
+  type: "Expression";
   expr: Expr;
 }
 
-export interface DaiStmt extends ExprStmt {
+export interface DhindaStmt extends Omit<Expression, "type"> {
+  type: "Dhinda";
+}
+
+export interface DaiStmt extends Omit<ExprStmt, "type"> {
+  type: "Dai";
   thenStmt: Stmt;
   branchStmt?: Stmt;
 }
 
-export interface ChengStmt extends ExprStmt {
+export interface ChengStmt extends Omit<ExprStmt, "type"> {
+  type: "Cheng";
   name: Token;
 }
 
@@ -38,25 +34,25 @@ export interface ChengStmt extends ExprStmt {
 export type Stmt = BlockStmt | DaiStmt | ExprStmt | ChengStmt;
 
 export function BlockStmt(statements: Stmt[]): Stmt {
-  return { children: statements };
+  return { type: "Block", children: statements };
 }
 
 export function DaiStmt(expr: Expr, thenStmt: Stmt, branchStmt?: Stmt): Stmt {
-  return { expr, thenStmt, branchStmt };
+  return { type: "Dai", expr, thenStmt, branchStmt };
 }
 
 export function DhindaStmt(expr: Expr): Stmt {
 
-  return { expr };
+  return { type: "Dhinda", expr };
 
 }
 
 export function ExpressionStmt(expr: Expr): Stmt {
 
-  return { expr };
+  return { type: "Expression", expr };
 
 }
 
 export function ChengStmt(name: Token, expr: Expr): Stmt {
-  return { name: name, expr, }
+  return { type: "Cheng", name: name, expr, }
 }
