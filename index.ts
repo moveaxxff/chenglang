@@ -30,12 +30,14 @@ class Environment {
 
   private enclosing?: Environment = undefined;
 
-  private variables: Map<string, any> = new Map()
+  variables: Map<string, any> = new Map()
   private tokens: Map<string, Token> = new Map();
 
   constructor(enclosing?: Environment) {
     this.enclosing = enclosing;
   }
+
+
 
   get(name?: Token): any {
 
@@ -43,15 +45,16 @@ class Environment {
       return undefined;
     }
 
-
-    if (this.variables.has(name.lexeme)) {
-      return this.variables.get(name.lexeme);
+    if (name.lexeme === "outClock") {
+      console.log(this)
     }
 
-    if (this.enclosing !== undefined) {
-      if (this.enclosing.variables.has(name.lexeme)) {
-        return this.enclosing.variables.get(name.lexeme);
+    let tempEnv: Environment | undefined = this;
+    while (tempEnv !== undefined) {
+      if (tempEnv.variables.has(name.lexeme)) {
+        return tempEnv.variables.get(name.lexeme);
       }
+      tempEnv = tempEnv.enclosing;
     }
 
 
@@ -59,22 +62,22 @@ class Environment {
 
   }
 
+
+
   assign(name: Token, value: any) {
 
-    if (!this.variables.has(name.lexeme) && this.enclosing === undefined) {
-      throw new RuntimeException(name, `Undefined variable '${name.lexeme}'`)
+    let tempEnv: Environment | undefined = this;
+
+    while (tempEnv !== undefined) {
+      if (tempEnv.variables.has(name.lexeme)) {
+        tempEnv.variables.set(name.lexeme, value);
+        return;
+      }
+      tempEnv = tempEnv.enclosing;
     }
 
-    if (this.variables.has(name.lexeme)) {
-      this.variables.set(name.lexeme, value);
-      return;
-    }
+    throw new RuntimeException(name, `Undefined variable '${name.lexeme}'`)
 
-    if (!this.enclosing?.variables?.has(name.lexeme)) {
-      throw new RuntimeException(name, `Undefined variable '${name.lexeme}'`)
-    }
-
-    this.enclosing?.variables.set(name.lexeme, value);
 
   }
 
@@ -500,6 +503,8 @@ class Parser {
 
   statement(): Stmt {
 
+
+    if (this.match([TokenType.CHIN])) this.chinStatement();
     if (this.match([TokenType.DAI])) return this.daiStatement();
     if (this.match([TokenType.DHINDA])) return this.dhindaStatement();
     if (this.match([TokenType.APO])) return this.apoStatement();
@@ -509,6 +514,47 @@ class Parser {
 
     return this.expressionStatement();
 
+  }
+
+  private chinStatement(): Stmt {
+    let initializer: Stmt | undefined = undefined;
+
+    if (this.match([TokenType.SEMICOLON])) {
+      initializer = undefined;
+    } else if (this.match([TokenType.CHENG])) {
+      initializer = this.chengDeclaration();
+    } else {
+      initializer = this.expressionStatement();
+    }
+
+    let condition: Expr | undefined = undefined;
+
+    if (!this.check(TokenType.SEMICOLON)) {
+      condition = this.commaSeries();
+    }
+
+    this.consume(TokenType.SEMICOLON, "Expect ';' after loop condition. ");
+    const increment = this.commaSeries();
+
+    let body = this.statement();
+
+    console.log(body)
+
+    if (body) {
+      body = BlockStmt([body, ExpressionStmt(increment)]);
+    }
+
+    if (condition === undefined) condition = LiteralExpr(true);
+
+    body = ApoStmt(condition, body);
+
+    // console.log(JSON.stringify(body, null, 2));
+
+    if (initializer !== undefined) {
+      body = BlockStmt([initializer, body]);
+    }
+
+    return body;
   }
 
   daiStatement(): Stmt {

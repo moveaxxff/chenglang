@@ -19,8 +19,22 @@ apo count != 10 {
   count = count + 1;
 }
 
+chin cheng i = 0; i < 10; i = i + 1  {
+  dhinda "Chin: " + i;
+}
+
 dai (chokwadi kana kunyepa) {
   dhinda "kana operator is now working";
+}
+
+{
+  cheng outClock = 90;
+  { 
+    {
+      outClock = outClock + 1;
+      dhinda "out clock: " + outClock;
+    }
+  }
 }
 
 cheng value = "tawanda";
