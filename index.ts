@@ -60,11 +60,22 @@ class Environment {
   }
 
   assign(name: Token, value: any) {
-    if (!this.variables.has(name.lexeme)) {
+
+    if (!this.variables.has(name.lexeme) && this.enclosing === undefined) {
       throw new RuntimeException(name, `Undefined variable '${name.lexeme}'`)
     }
 
-    this.variables.set(name.lexeme, value);
+    if (this.variables.has(name.lexeme)) {
+      this.variables.set(name.lexeme, value);
+      return;
+    }
+
+    if (!this.enclosing?.variables?.has(name.lexeme)) {
+      throw new RuntimeException(name, `Undefined variable '${name.lexeme}'`)
+    }
+
+    this.enclosing?.variables.set(name.lexeme, value);
+
   }
 
   define(name: Token, value: any): void {
@@ -685,6 +696,11 @@ function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }
 
 
   switch (stmt.type) {
+    case 'Apo':
+      while (InterpretExpr({ environment }, stmt.expr)) {
+        InterpretStmt(stmt.body, { environment })
+      }
+      break;
     case "Dai":
 
       if (InterpretExpr({ environment }, stmt.expr)) {

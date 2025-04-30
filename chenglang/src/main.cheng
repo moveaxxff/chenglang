@@ -12,6 +12,13 @@ dai (chokwadi ne chokwadi) {
   dhinda "ne operator is now working";
 }
 
+cheng count = 1;
+
+apo count != 10 {
+  dhinda "count: " + count;
+  count = count + 1;
+}
+
 dai (chokwadi kana kunyepa) {
   dhinda "kana operator is now working";
 }
