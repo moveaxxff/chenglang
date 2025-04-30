@@ -1,0 +1,19 @@
+{
+  "type": "Apo",
+  "expr": {
+    "type": "Literal",
+    "value": true
+  },
+  "body": {
+    "type": "Block",
+    "children": [
+      {
+        "type": "Dhinda",
+        "expr": {
+          "type": "Literal",
+          "value": "Chin: "
+        }
+      }
+    ]
+  }
+}

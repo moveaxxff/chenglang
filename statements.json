@@ -1,0 +1,127 @@
+[
+  {
+    "type": "Cheng",
+    "name": {
+      "line": 49,
+      "lexeme": "z",
+      "type": "IDENTIFIER"
+    },
+    "expr": {
+      "type": "Literal",
+      "value": 10
+    }
+  },
+  {
+    "type": "Cheng",
+    "name": {
+      "line": 50,
+      "lexeme": "x",
+      "type": "IDENTIFIER"
+    },
+    "expr": {
+      "type": "Literal",
+      "value": 300
+    }
+  },
+  {
+    "type": "Dhinda",
+    "expr": {
+      "type": "Binary",
+      "left": {
+        "type": "Literal",
+        "value": "Inside block: "
+      },
+      "operator": {
+        "line": 51,
+        "lexeme": "+",
+        "type": "+"
+      },
+      "right": {
+        "type": "Grouping",
+        "expression": {
+          "type": "Binary",
+          "left": {
+            "type": "Variable",
+            "operator": {
+              "line": 51,
+              "lexeme": "x",
+              "type": "IDENTIFIER"
+            }
+          },
+          "operator": {
+            "line": 51,
+            "lexeme": "+",
+            "type": "+"
+          },
+          "right": {
+            "type": "Variable",
+            "operator": {
+              "line": 51,
+              "lexeme": "z",
+              "type": "IDENTIFIER"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "Dhinda",
+    "expr": {
+      "type": "Literal",
+      "value": "Hello"
+    }
+  },
+  {
+    "type": "Block",
+    "children": [
+      {
+        "type": "Cheng",
+        "name": {
+          "line": 54,
+          "lexeme": "x",
+          "type": "IDENTIFIER"
+        },
+        "expr": {
+          "type": "Literal",
+          "value": 90
+        }
+      },
+      {
+        "type": "Dhinda",
+        "expr": {
+          "type": "Binary",
+          "left": {
+            "type": "Literal",
+            "value": "Inside block 2"
+          },
+          "operator": {
+            "line": 55,
+            "lexeme": "+",
+            "type": "+"
+          },
+          "right": {
+            "type": "Variable",
+            "operator": {
+              "line": 55,
+              "lexeme": "x",
+              "type": "IDENTIFIER"
+            }
+          }
+        }
+      },
+      {
+        "type": "Block",
+        "children": [
+          {
+            "type": "Dhinda",
+            "expr": {
+              "type": "Literal",
+              "value": "Block 3"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

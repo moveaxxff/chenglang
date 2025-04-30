@@ -500,7 +500,7 @@ class Parser {
   statement(): Stmt {
 
 
-    if (this.match([TokenType.CHIN])) this.chinStatement();
+    if (this.match([TokenType.CHIN]))  return this.chinStatement();
     if (this.match([TokenType.DAI])) return this.daiStatement();
     if (this.match([TokenType.DHINDA])) return this.dhindaStatement();
     if (this.match([TokenType.APO])) return this.apoStatement();
@@ -516,6 +516,9 @@ class Parser {
     let initializer: Stmt | undefined = undefined;
 
     if (this.match([TokenType.SEMICOLON])) {
+      console.log(
+        "HAHAHAHAH MA"
+      )
       initializer = undefined;
     } else if (this.match([TokenType.CHENG])) {
       initializer = this.chengDeclaration();
@@ -524,23 +527,40 @@ class Parser {
     }
 
     let condition: Expr | undefined = undefined;
-
+    console.log("HAHAHA 22")
+    console.log(this.peek())
     if (!this.check(TokenType.SEMICOLON)) {
+      console.log(
+        "HAHAH"
+      )
       condition = this.commaSeries();
+      console.log(condition)
     }
 
     this.consume(TokenType.SEMICOLON, "Expect ';' after loop condition. ");
-    const increment = this.commaSeries();
+
+    console.log(
+      "HAHAHA @@@"
+    )
+    console.log(this.peek())
+
+    let increment: Expr | undefined = undefined;
+
+    if (condition) {
+      increment = this.commaSeries();
+    }
+
 
     let body = this.statement();
+    console.log(
+      "BODYY HAHAHAH"
+    )
 
-    // console.log(body)
-
-    if (body) {
+    if (increment) {
       body = BlockStmt([body, ExpressionStmt(increment)]);
     }
 
-    if (condition === undefined) condition = LiteralExpr(true);
+    if (condition === undefined) { condition = LiteralExpr(true); }
 
     body = ApoStmt(condition, body);
 
@@ -550,7 +570,12 @@ class Parser {
       body = BlockStmt([initializer, body]);
     }
 
-    return body;
+    Bun.write("./debug.json", JSON.stringify(body, null, 2));
+
+    console.log("RETIURN APO")
+
+    return ApoStmt(LiteralExpr(true), DhindaStmt(LiteralExpr("Hello world")));
+
   }
 
   daiStatement(): Stmt {
@@ -582,6 +607,8 @@ class Parser {
         statements.push(declaration);
       }
     }
+
+    Bun.write("./statements.json", JSON.stringify(statements, null, 2));
 
     this.consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
 
@@ -731,7 +758,6 @@ function InterpretStmts(stmts: Stmt[]): void {
     InterpretStmt(stmt, { environment });
   }
 
-  console.log(environment)
 }
 
 function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }): void {
@@ -739,7 +765,11 @@ function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }
 
   switch (stmt.type) {
     case 'Apo':
-      while (InterpretExpr({ environment }, stmt.expr)) {
+
+      const expr = InterpretExpr({ environment }, stmt.expr);
+      console.log(expr)
+      console.log("HAHAHAH INSIDE APO STATEMENT")
+      while (expr) {
         InterpretStmt(stmt.body, { environment })
       }
       break;
