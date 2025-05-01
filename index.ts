@@ -1,7 +1,9 @@
 import { parseArgs } from 'util';
 import { TokenType, Token } from './Token';
 import { AssignExpr, BinaryExpr, ChengExpr, GroupingExpr, LiteralExpr, LogicalExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
-import { ApoStmt, BlockStmt, ChengStmt, DaiStmt, DhindaStmt, ExpressionStmt, StmtType, type Stmt } from './Stmt';
+import { ApoStmt, BlockStmt, ChengStmt, DaiStmt, DhindaStmt, ExpressionStmt, type Stmt } from './Stmt';
+import { randomUUIDv7 } from 'bun';
+import type { strict } from 'assert';
 
 const { values } = parseArgs({
   args: Bun.argv,
@@ -29,6 +31,7 @@ class RuntimeException extends Error {
 class Environment {
 
   private enclosing?: Environment = undefined;
+  id = randomUUIDv7();
 
   variables: Map<string, any> = new Map()
   private tokens: Map<string, Token> = new Map();
@@ -43,10 +46,6 @@ class Environment {
 
     if (name === undefined) {
       return undefined;
-    }
-
-    if (name.lexeme === "i") {
-      console.log(this);
     }
 
     let tempEnv: Environment | undefined = this;
@@ -734,37 +733,57 @@ function RuntimeError(error: RuntimeException) {
 function InterpretStmts(stmts: Stmt[]): void {
 
   const environment = new Environment();
+  const blockEnviroments: Map<string, Environment> = new Map();
 
   for (const stmt of stmts) {
-    InterpretStmt(stmt, { environment });
+    InterpretStmt(stmt, { environment }, { blockEnviroments, executingBlockId: undefined });
   }
 
 }
 
-function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }): void {
+function InterpretStmt(stmt: Stmt,
+  { environment }: { environment: Environment },
+  { blockEnviroments, executingBlockId }: {
+    blockEnviroments: Map<string, Environment>,
+    executingBlockId: string | undefined
+  }): void {
 
 
   switch (stmt.type) {
     case 'Apo':
-
-      const expr = InterpretExpr({ environment }, stmt.expr);
-      while (expr) {
-        InterpretStmt(stmt.body, { environment })
+      executingBlockId = randomUUIDv7();
+      while (InterpretExpr({ environment }, stmt.expr)) {
+        InterpretStmt(stmt.body, { environment }, { blockEnviroments, executingBlockId });
       }
+      executingBlockId = undefined;
+      blockEnviroments.clear();
       break;
     case "Dai":
 
       if (InterpretExpr({ environment }, stmt.expr)) {
-        InterpretStmt(stmt.thenStmt, { environment });
+        InterpretStmt(stmt.thenStmt, { environment }, { blockEnviroments, executingBlockId });
       } else if (stmt.branchStmt !== undefined) {
-        InterpretStmt(stmt.branchStmt, { environment });
+        InterpretStmt(stmt.branchStmt, { environment }, { blockEnviroments, executingBlockId });
       }
       break;
     case "Block":
-      const blockEnv = new Environment(environment);
-      for (const child of stmt.children) {
-        InterpretStmt(child, { environment: blockEnv });
+
+      if (executingBlockId) {
+
+        if (!blockEnviroments.has(executingBlockId)) {
+          blockEnviroments.set(executingBlockId, new Environment(environment));
+        }
+        for (const child of stmt.children) {
+          InterpretStmt(child, { environment: blockEnviroments.get(executingBlockId) as Environment }, { blockEnviroments, executingBlockId });
+        }
+      } else {
+        const blockEnv = new Environment(environment);
+        for (const child of stmt.children) {
+          InterpretStmt(child, { environment: blockEnv }, { blockEnviroments, executingBlockId });
+        }
+
       }
+
       break;
     case "Cheng":
       const value = InterpretExpr({ environment }, stmt.expr);
@@ -774,7 +793,7 @@ function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }
       InterpretExpr({ environment }, stmt.expr)
       break;
     case "Dhinda":
-      console.log(InterpretExpr({ environment }, stmt.expr));
+      // console.log(InterpretExpr({ environment }, stmt.expr));
       break;
   }
 
@@ -852,6 +871,7 @@ function InterpretExpr({ environment }: { environment: Environment }, expr?: Exp
             case TokenType.GREATER_EQUAL:
               return Number(left) >= Number(right);
             case TokenType.LESS:
+              console.log(left)
               return Number(left) < Number(right);
             case TokenType.LESS_EQUAL:
               return Number(left) <= Number(right);

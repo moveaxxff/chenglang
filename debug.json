@@ -4,7 +4,7 @@
     {
       "type": "Cheng",
       "name": {
-        "line": 36,
+        "line": 37,
         "lexeme": "i",
         "type": "IDENTIFIER"
       },
@@ -20,13 +20,13 @@
         "left": {
           "type": "Variable",
           "operator": {
-            "line": 36,
+            "line": 37,
             "lexeme": "i",
             "type": "IDENTIFIER"
           }
         },
         "operator": {
-          "line": 36,
+          "line": 37,
           "lexeme": "<",
           "type": "<"
         },
@@ -50,14 +50,14 @@
                     "value": "Chin: "
                   },
                   "operator": {
-                    "line": 37,
+                    "line": 38,
                     "lexeme": "+",
                     "type": "+"
                   },
                   "right": {
                     "type": "Variable",
                     "operator": {
-                      "line": 37,
+                      "line": 38,
                       "lexeme": "i",
                       "type": "IDENTIFIER"
                     }
@@ -75,13 +75,13 @@
                 "left": {
                   "type": "Variable",
                   "operator": {
-                    "line": 36,
+                    "line": 37,
                     "lexeme": "i",
                     "type": "IDENTIFIER"
                   }
                 },
                 "operator": {
-                  "line": 36,
+                  "line": 37,
                   "lexeme": "+",
                   "type": "+"
                 },
@@ -91,7 +91,7 @@
                 }
               },
               "operator": {
-                "line": 36,
+                "line": 37,
                 "lexeme": "i",
                 "type": "IDENTIFIER"
               }

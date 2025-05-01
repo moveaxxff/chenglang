@@ -28,6 +28,7 @@ dai (chokwadi ne chokwadi) {
   {
     apo i < 90 {
       dhinda "Repl: " + i;
+      dhinda i < 90;
       i = i + 1;
     }
   }
