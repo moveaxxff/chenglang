@@ -733,14 +733,14 @@ function InterpretStmts(stmts: Stmt[]): void {
   const blockEnviroments: Map<string, Environment> = new Map();
 
   for (const stmt of stmts) {
-    InterpretStmt(stmt, { environment }, { blockEnviroments, executingBlockId: undefined });
+    InterpretStmt(stmt, { environment, blockEnviroments, executingBlockId: undefined });
   }
 
 }
 
 function InterpretStmt(stmt: Stmt,
-  { environment }: { environment: Environment },
-  { blockEnviroments, executingBlockId }: {
+  { environment, blockEnviroments, executingBlockId }: {
+    environment: Environment
     blockEnviroments: Map<string, Environment>,
     executingBlockId: string | undefined
   }): void {
@@ -750,7 +750,11 @@ function InterpretStmt(stmt: Stmt,
     case 'Apo':
       executingBlockId = randomUUIDv7();
       while (InterpretExpr({ environment }, stmt.expr)) {
-        InterpretStmt(stmt.body, { environment }, { blockEnviroments, executingBlockId });
+        InterpretStmt(stmt.body, {
+          environment,
+          blockEnviroments,
+          executingBlockId
+        });
       }
       executingBlockId = undefined;
       blockEnviroments.clear();
@@ -758,9 +762,13 @@ function InterpretStmt(stmt: Stmt,
     case "Dai":
 
       if (InterpretExpr({ environment }, stmt.expr)) {
-        InterpretStmt(stmt.thenStmt, { environment }, { blockEnviroments, executingBlockId });
+        InterpretStmt(stmt.thenStmt, { environment, blockEnviroments, executingBlockId });
       } else if (stmt.branchStmt !== undefined) {
-        InterpretStmt(stmt.branchStmt, { environment }, { blockEnviroments, executingBlockId });
+        InterpretStmt(stmt.branchStmt, {
+          environment,
+          blockEnviroments,
+          executingBlockId
+        });
       }
       break;
     case "Block":
@@ -771,12 +779,16 @@ function InterpretStmt(stmt: Stmt,
           blockEnviroments.set(executingBlockId, new Environment(environment));
         }
         for (const child of stmt.children) {
-          InterpretStmt(child, { environment: blockEnviroments.get(executingBlockId) as Environment }, { blockEnviroments, executingBlockId });
+          InterpretStmt(child, {
+            environment: blockEnviroments.get(executingBlockId) as Environment,
+            blockEnviroments,
+            executingBlockId
+          });
         }
       } else {
         const blockEnv = new Environment(environment);
         for (const child of stmt.children) {
-          InterpretStmt(child, { environment: blockEnv }, { blockEnviroments, executingBlockId });
+          InterpretStmt(child, { environment: blockEnv, blockEnviroments, executingBlockId });
         }
 
       }
@@ -790,7 +802,7 @@ function InterpretStmt(stmt: Stmt,
       InterpretExpr({ environment }, stmt.expr)
       break;
     case "Dhinda":
-      // console.log(InterpretExpr({ environment }, stmt.expr));
+      console.log(InterpretExpr({ environment }, stmt.expr));
       break;
   }
 
