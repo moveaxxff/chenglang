@@ -551,9 +551,6 @@ class Parser {
 
     if (initializer !== undefined) {
       body = BlockStmt([initializer, body]);
-      console.log("INISDNIS")
-      Bun.write("./debug.json", JSON.stringify(body, null, 2))
-
     }
 
     return body;
@@ -871,7 +868,6 @@ function InterpretExpr({ environment }: { environment: Environment }, expr?: Exp
             case TokenType.GREATER_EQUAL:
               return Number(left) >= Number(right);
             case TokenType.LESS:
-              console.log(left)
               return Number(left) < Number(right);
             case TokenType.LESS_EQUAL:
               return Number(left) <= Number(right);
