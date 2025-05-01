@@ -45,6 +45,10 @@ class Environment {
       return undefined;
     }
 
+    if (name.lexeme === "i") {
+      console.log(this);
+    }
+
     let tempEnv: Environment | undefined = this;
     while (tempEnv !== undefined) {
       if (tempEnv.variables.has(name.lexeme)) {
@@ -63,7 +67,6 @@ class Environment {
   assign(name: Token, value: any) {
 
     let tempEnv: Environment | undefined = this;
-
     while (tempEnv !== undefined) {
       if (tempEnv.variables.has(name.lexeme)) {
         tempEnv.variables.set(name.lexeme, value);
@@ -72,12 +75,13 @@ class Environment {
       tempEnv = tempEnv.enclosing;
     }
 
-    throw new RuntimeException(name, `Undefined variable '${name.lexeme}'`)
+    throw new RuntimeException(name, `Undefined variable'${name.lexeme}'`)
 
 
   }
 
   define(name: Token, value: any): void {
+
     if (this.variables.has(name.lexeme)) {
       const token = this.tokens.get(name.lexeme);
       console.error(`previous definition of '${name.lexeme}' at [line ${token?.line}]`)
@@ -526,19 +530,18 @@ class Parser {
     let condition: Expr | undefined = undefined;
     if (!this.check(TokenType.SEMICOLON)) {
 
-      condition = this.commaSeries();
-      console.log(condition)
+      condition = this.expression();
     }
 
     this.consume(TokenType.SEMICOLON, "Expect ';' after loop condition. ");
     let increment: Expr | undefined = undefined;
 
     if (condition) {
-      increment = this.commaSeries();
+      increment = this.expression();
     }
 
-
     let body = this.statement();
+
     if (increment) {
       body = BlockStmt([body, ExpressionStmt(increment)]);
     }
@@ -547,12 +550,14 @@ class Parser {
 
     body = ApoStmt(condition, body);
 
-
     if (initializer !== undefined) {
       body = BlockStmt([initializer, body]);
+      console.log("INISDNIS")
+      Bun.write("./debug.json", JSON.stringify(body, null, 2))
+
     }
 
-    return ApoStmt(LiteralExpr(true), DhindaStmt(LiteralExpr("Hello world")));
+    return body;
 
   }
 
@@ -763,9 +768,7 @@ function InterpretStmt(stmt: Stmt, { environment }: { environment: Environment }
       break;
     case "Cheng":
       const value = InterpretExpr({ environment }, stmt.expr);
-      if (stmt.name && value) {
-        environment.define(stmt.name, value)
-      }
+      environment.define(stmt.name, value);
       break;
     case "Expression":
       InterpretExpr({ environment }, stmt.expr)

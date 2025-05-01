@@ -1,19 +1,104 @@
 {
-  "type": "Apo",
-  "expr": {
-    "type": "Literal",
-    "value": true
-  },
-  "body": {
-    "type": "Block",
-    "children": [
-      {
-        "type": "Dhinda",
-        "expr": {
-          "type": "Literal",
-          "value": "Chin: "
-        }
+  "type": "Block",
+  "children": [
+    {
+      "type": "Cheng",
+      "name": {
+        "line": 36,
+        "lexeme": "i",
+        "type": "IDENTIFIER"
+      },
+      "expr": {
+        "type": "Literal",
+        "value": 0
       }
-    ]
-  }
+    },
+    {
+      "type": "Apo",
+      "expr": {
+        "type": "Binary",
+        "left": {
+          "type": "Variable",
+          "operator": {
+            "line": 36,
+            "lexeme": "i",
+            "type": "IDENTIFIER"
+          }
+        },
+        "operator": {
+          "line": 36,
+          "lexeme": "<",
+          "type": "<"
+        },
+        "right": {
+          "type": "Literal",
+          "value": 90
+        }
+      },
+      "body": {
+        "type": "Block",
+        "children": [
+          {
+            "type": "Block",
+            "children": [
+              {
+                "type": "Dhinda",
+                "expr": {
+                  "type": "Binary",
+                  "left": {
+                    "type": "Literal",
+                    "value": "Chin: "
+                  },
+                  "operator": {
+                    "line": 37,
+                    "lexeme": "+",
+                    "type": "+"
+                  },
+                  "right": {
+                    "type": "Variable",
+                    "operator": {
+                      "line": 37,
+                      "lexeme": "i",
+                      "type": "IDENTIFIER"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "Expression",
+            "expr": {
+              "type": "Assign",
+              "right": {
+                "type": "Binary",
+                "left": {
+                  "type": "Variable",
+                  "operator": {
+                    "line": 36,
+                    "lexeme": "i",
+                    "type": "IDENTIFIER"
+                  }
+                },
+                "operator": {
+                  "line": 36,
+                  "lexeme": "+",
+                  "type": "+"
+                },
+                "right": {
+                  "type": "Literal",
+                  "value": 1
+                }
+              },
+              "operator": {
+                "line": 36,
+                "lexeme": "i",
+                "type": "IDENTIFIER"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
 }

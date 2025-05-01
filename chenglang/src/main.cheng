@@ -7,7 +7,10 @@ dai (1 == 2) {
 
 dhinda "left" ne "right";
 dhinda "left" kana "right";
-
+{
+  cheng hello = "Hello Tawnada";
+  dhinda hello;
+}
 dai (chokwadi ne chokwadi) {
   dhinda "ne operator is now working";
 }
@@ -20,8 +23,18 @@ dai (chokwadi ne chokwadi) {
 //  }
 // }
 
-chin ;; {
-  dhinda "Chin: ";
+{
+  cheng i = 0;
+  {
+    apo i < 90 {
+      dhinda "Repl: " + i;
+      i = i + 1;
+    }
+  }
+}
+
+chin cheng i = 0; i < 90; i = i + 1 {
+  dhinda "Chin: " + i;
 }
 
 dai (chokwadi kana kunyepa) {
