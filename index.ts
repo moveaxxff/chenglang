@@ -731,66 +731,77 @@ function InterpretStmts(stmts: Stmt[]): void {
 
   const environment = new Environment();
   const blockEnviroments: Map<string, Environment> = new Map();
+  const executingBlocks: { node: string, left?: string }[] = [];
 
   for (const stmt of stmts) {
-    InterpretStmt(stmt, { environment, blockEnviroments, executingBlockId: undefined });
+    InterpretStmt(stmt, { environment, blockEnviroments, executingBlocks: executingBlocks, executingBlock: undefined });
   }
 
 }
 
 function InterpretStmt(stmt: Stmt,
-  { environment, blockEnviroments, executingBlockId }: {
+  { environment, blockEnviroments, executingBlocks, executingBlock }: {
     environment: Environment
     blockEnviroments: Map<string, Environment>,
-    executingBlockId: string | undefined
+    executingBlocks: { node: string, left?: string }[]
+    executingBlock?: { node: string, left?: string }
   }): void {
 
 
   switch (stmt.type) {
     case 'Apo':
-      executingBlockId = randomUUIDv7();
+
+      if (executingBlocks.length === 0) {
+        executingBlock = {
+          node: randomUUIDv7()
+        };
+        executingBlocks.push(executingBlock)
+      } else {
+        executingBlock = { node: randomUUIDv7(), left: executingBlock?.node }
+        executingBlocks.push(executingBlock)
+      }
+
       while (InterpretExpr({ environment }, stmt.expr)) {
         InterpretStmt(stmt.body, {
           environment,
           blockEnviroments,
-          executingBlockId
+          executingBlocks
         });
       }
-      executingBlockId = undefined;
+      executingBlocks = [];
       blockEnviroments.clear();
       break;
     case "Dai":
 
       if (InterpretExpr({ environment }, stmt.expr)) {
-        InterpretStmt(stmt.thenStmt, { environment, blockEnviroments, executingBlockId });
+        InterpretStmt(stmt.thenStmt, { environment, blockEnviroments, executingBlocks });
       } else if (stmt.branchStmt !== undefined) {
         InterpretStmt(stmt.branchStmt, {
           environment,
           blockEnviroments,
-          executingBlockId
+          executingBlocks
         });
       }
       break;
     case "Block":
 
-      if (executingBlockId) {
-
-        if (!blockEnviroments.has(executingBlockId)) {
-          blockEnviroments.set(executingBlockId, new Environment(environment));
+      if (executingBlock) {
+        if (!blockEnviroments.has(executingBlock.node)) {
+          blockEnviroments.set(executingBlock.node, new Environment(environment));
         }
         for (const child of stmt.children) {
           InterpretStmt(child, {
-            environment: blockEnviroments.get(executingBlockId) as Environment,
+            environment: blockEnviroments.get(executingBlock.node) as Environment,
             blockEnviroments,
-            executingBlockId
+            executingBlocks,
+            executingBlock
           });
         }
       } else {
         const blockEnv = new Environment(environment);
         for (const child of stmt.children) {
-          InterpretStmt(child, { environment: blockEnv, blockEnviroments, executingBlockId });
+          InterpretStmt(child, { environment: blockEnv, blockEnviroments, executingBlocks, executingBlock });
         }
-
       }
 
       break;

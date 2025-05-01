@@ -15,27 +15,19 @@ dai (chokwadi ne chokwadi) {
   dhinda "ne operator is now working";
 }
 
-//{
-//  cheng count = 1;
-//  apo count < 10 {
-//    dhinda "count: " + count;
-//    count = count + 1;
-//  }
-// }
 
-{
-  cheng i = 0;
-  {
-    apo i < 90 {
-      dhinda "Repl: " + i;
-      dhinda i < 90;
-      i = i + 1;
+chin cheng i = 0; i < 2; i = i + 1 {
+  dhinda "Chin Y: " + i;
+  chin cheng z = 0; z < 2; z = z + 1 {
+    dhinda "Chin Z: " + z;
+    chin cheng t = 0; t < 2; t = t + 1 {
+      dhinda "Chin T: " + t;
+         chin cheng t = 0; t < 2; t = t + 1 {
+      dhinda "Chin T: " + t;
+    }
+
     }
   }
-}
-
-chin cheng i = 0; i < 90; i = i + 1 {
-  dhinda "Chin: " + i;
 }
 
 dai (chokwadi kana kunyepa) {
