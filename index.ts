@@ -3,7 +3,6 @@ import { TokenType, Token } from './Token';
 import { AssignExpr, BinaryExpr, ChengExpr, GroupingExpr, LiteralExpr, LogicalExpr, PrintAST, UnaryExpr, type Expr } from './Expr';
 import { ApoStmt, BlockStmt, ChengStmt, DaiStmt, DhindaStmt, ExpressionStmt, type Stmt } from './Stmt';
 import { randomUUIDv7 } from 'bun';
-import type { strict } from 'assert';
 
 const { values } = parseArgs({
   args: Bun.argv,
